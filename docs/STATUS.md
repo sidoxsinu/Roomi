@@ -31,7 +31,7 @@ Last updated: 2026-11-03
 | APP-6 | Readings panel | Implemented (mock-tested) | Readings panel bubble with live physical robot telemetry verified (2026-11-03) |
 | APP-7 | Click and drag | Implemented (mock-tested) | Jump reaction, robot bleep vocalizations, drag tilt, gravity drop, ceiling bounce, squash-stretch landing impact (2026-11-04) |
 | APP-8 | Idle and sleep | Implemented (mock-tested) | Robot idle blinks and sleep standby mode with procedural audio verified (2026-11-04) |
-| APP-9 | Settings window | Implemented (mock-tested) | Settings window with live IPC, companion model selector, sound controls/previews, and disclaimer verified (2026-11-04) |
+| APP-9 | Settings window | Implemented (mock-tested) | Settings window with Robo-Node digital twin default, model selector, audio controls, and disclaimer verified (2026-11-04) |
 | APP-10 | Click-through | Implemented (mock-tested) | Forwarded mousemove hover toggling implemented (2026-11-03) |
 | APP-11 | Tray / menu-bar | Implemented (mock-tested) | Menu bar / system tray with Show/Hide and Quit verified (2026-11-03) |
 | APP-12 | Simulation mode | Implemented (mock-tested) | Simulation mode with sliders and SIMULATION badge verified (2026-11-03) |
