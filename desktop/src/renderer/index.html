@@ -8,8 +8,39 @@
 </head>
 <body>
   <div id="pet-container">
+    <!-- Info Panel Bubble (APP-6) -->
+    <div id="info-panel" class="hidden">
+      <div class="panel-header">
+        <span class="status-dot online" id="panel-status-dot"></span>
+        <span id="panel-status-text">Online</span>
+        <span id="panel-sim-badge" class="sim-badge" style="display: none;">SIMULATION</span>
+      </div>
+      <div class="panel-readings">
+        <div class="reading-box">
+          <span class="reading-label">TEMP</span>
+          <span class="reading-val" id="val-temp">--</span>
+        </div>
+        <div class="reading-box">
+          <span class="reading-label">HUMIDITY</span>
+          <span class="reading-val" id="val-humidity">--</span>
+        </div>
+      </div>
+      <div class="panel-extra" id="panel-extra" style="display: none;">
+        <span id="val-light">Light: --</span>
+        <span id="val-sound">Sound: --</span>
+      </div>
+      <div class="panel-reasons" id="panel-reasons" style="display: none;"></div>
+    </div>
+
+    <!-- Speech Bubble for State Messages -->
+    <div id="speech-bubble" class="hidden">
+      <span id="speech-text">Hello!</span>
+    </div>
+
+    <!-- Animated Character -->
     <div id="character"></div>
   </div>
+
   <script src="character/character.js"></script>
   <script src="renderer.js"></script>
 </body>

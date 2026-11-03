@@ -19,9 +19,10 @@ html, body {
   height: 100%;
   position: relative;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 8px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 6px;
   cursor: grab;
 }
 
@@ -29,6 +30,122 @@ html, body {
   cursor: grabbing;
 }
 
+/* Info Panel Bubble (APP-6) */
+#info-panel {
+  position: absolute;
+  top: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: auto;
+  min-width: 150px;
+}
+
+#info-panel.hidden {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4b6584;
+  margin-bottom: 6px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #20bf6b;
+}
+
+.status-dot.offline {
+  background-color: #eb3b5a;
+}
+
+.sim-badge {
+  background-color: #f7b731;
+  color: #2d3436;
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.panel-readings {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.reading-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.reading-label {
+  font-size: 9px;
+  color: #778ca3;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.reading-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.panel-extra {
+  font-size: 10px;
+  color: #778ca3;
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+}
+
+.panel-reasons {
+  font-size: 10px;
+  color: #eb3b5a;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Speech Bubble */
+#speech-bubble {
+  position: absolute;
+  top: 14px;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #2d3436;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  z-index: 9;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+#speech-bubble.hidden {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+/* Character Container */
 #character {
   display: flex;
   justify-content: center;

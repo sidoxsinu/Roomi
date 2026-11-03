@@ -28,7 +28,7 @@ Last updated: 2026-11-03
 | APP-3 | Poll ESP32 | Implemented (mock-tested) | Polling with AbortController timeout verified (2026-11-03) |
 | APP-4 | Validate and detect disconnect | Implemented (mock-tested) | Strict shape/range validation and disconnect detection verified (2026-11-03) |
 | APP-5 | Threshold-driven states | Implemented (mock-tested) | Priority and hysteresis reaction engine tested (2026-11-03) |
-| APP-6 | Readings panel | Planned | |
+| APP-6 | Readings panel | Implemented (mock-tested) | Readings panel bubble with live temp, humidity, status verified (2026-11-03) |
 | APP-7 | Click and drag | Implemented (mock-tested) | Jump reaction on click, manual drag repositioning verified (2026-11-03) |
 | APP-8 | Idle and sleep | Implemented (mock-tested) | Idle animation and inactivity sleep with wake-on-interaction verified (2026-11-03) |
 | APP-9 | Settings window | Planned | |
@@ -49,7 +49,7 @@ Last updated: 2026-11-03
 | M3 Firmware networking | Written, not flashed | Endpoints, Wi-Fi reconnect, mDNS, and LED implemented (2026-11-03) |
 | M4 Electron shell | Implemented (mock-tested) | Window, tray, IPC, and cross-platform launcher verified (2026-11-03) |
 | M5 Character and walking | Implemented (mock-tested) | Character SVG, walker, click-through, drag, jump, and sleep verified (2026-11-03) |
-| M6 Sensor integration | Planned |
+| M6 Sensor integration | Implemented (mock-tested) | Sensor client, reaction engine, state wiring, and info panel verified (2026-11-03) |
 | M7 Remaining states | Planned |
 | M8 Settings and simulation | Planned |
 | M9 Optional sensors | Planned |
