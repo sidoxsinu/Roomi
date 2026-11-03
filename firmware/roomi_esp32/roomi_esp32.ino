@@ -7,25 +7,66 @@
   #include "config.example.h"
 #endif
 
+// Sensor type validation switch
+#if (SENSOR_TYPE != DHT11) && (SENSOR_TYPE != DHT22)
+  #error "SENSOR_TYPE must be defined as either DHT11 or DHT22 in config.h"
+#endif
+
 DHT dht(DHT_PIN, SENSOR_TYPE);
+
+// Cached state (firmware never sends fabricated fallback values)
+float cachedTemp = 0.0;
+float cachedHumidity = 0.0;
+bool hasValidReading = false;
+String sensorStatus = "online"; // "online" or "error"
 
 unsigned long lastReadTime = 0;
 const unsigned long READ_INTERVAL_MS = 2000;
 
+// LED Blink state tracking
+unsigned long lastLedToggle = 0;
+bool ledState = false;
+
+void updateStatusLed() {
+  unsigned long now = millis();
+  if (sensorStatus == "error") {
+    // Fast blink: 150 ms period
+    if (now - lastLedToggle >= 150) {
+      lastLedToggle = now;
+      ledState = !ledState;
+      digitalWrite(LED_PIN, ledState ? HIGH : LOW);
+    }
+  } else {
+    // Solid ON when sensor is OK
+    digitalWrite(LED_PIN, HIGH);
+  }
+}
+
 void setup() {
   Serial.begin(115200);
   delay(500);
-  Serial.println("\n[ROOMI] ESP32 Sensor Bring-up Starting...");
+  Serial.println("\n=================================");
+  Serial.println("[ROOMI] ESP32 Sensor Initialising");
+  Serial.print("[ROOMI] Sensor Model: ");
+  #if (SENSOR_TYPE == DHT11)
+    Serial.println("DHT11");
+  #else
+    Serial.println("DHT22");
+  #endif
+  Serial.print("[ROOMI] DHT Pin: GPIO ");
+  Serial.println(DHT_PIN);
+  Serial.println("=================================");
 
-  dht.begin();
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 
-  Serial.println("[ROOMI] DHT initialized.");
+  dht.begin();
 }
 
 void loop() {
   unsigned long now = millis();
+
+  // Non-blocking sensor reading every 2000 ms
   if (now - lastReadTime >= READ_INTERVAL_MS) {
     lastReadTime = now;
 
@@ -33,13 +74,22 @@ void loop() {
     float h = dht.readHumidity();
 
     if (isnan(t) || isnan(h)) {
-      Serial.println("[ROOMI] [WARN] Failed to read from DHT sensor!");
+      sensorStatus = "error";
+      hasValidReading = false;
+      Serial.println("[ROOMI] [ERROR] DHT read failure! sensor_status set to 'error'.");
     } else {
+      sensorStatus = "online";
+      hasValidReading = true;
+      cachedTemp = t;
+      cachedHumidity = h;
+
       Serial.print("[ROOMI] Temp: ");
-      Serial.print(t, 1);
+      Serial.print(cachedTemp, 1);
       Serial.print(" °C | Hum: ");
-      Serial.print(h, 1);
-      Serial.println(" %");
+      Serial.print(cachedHumidity, 1);
+      Serial.println(" % [Status: online]");
     }
   }
+
+  updateStatusLed();
 }

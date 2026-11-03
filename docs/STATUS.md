@@ -18,7 +18,7 @@ Last updated: 2026-11-03
 | FW-1 | Read DHT | Written, not flashed | DHT read skeleton to Serial (2026-11-03) |
 | FW-2 | Wi-Fi + reconnect | Planned | |
 | FW-3 | GET /data | Planned | |
-| FW-4 | Error status, no fake values | Planned | |
+| FW-4 | Error status, no fake values | Written, not flashed | Reports error on isnan(), never sends fabricated numbers (2026-11-03) |
 | FW-5 | GET /health | Planned | |
 | FW-6 | mDNS roomi.local | Planned | |
 | FW-7 | LED indicator | Planned | |
@@ -45,7 +45,7 @@ Last updated: 2026-11-03
 |---|---|---|
 | M0 Repo bootstrap | Implemented | Initialised git, .gitignore, docs set, skeleton created (2026-11-03) |
 | M1 Mock server | Implemented | Server endpoints, controls, and docs verified (2026-11-03) |
-| M2 Firmware sensor | Planned |
+| M2 Firmware sensor | Written, not flashed | Error handling and DHT11/22 switch implemented (2026-11-03) |
 | M3 Firmware networking | Planned |
 | M4 Electron shell | Planned |
 | M5 Character and walking | Planned |
