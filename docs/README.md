@@ -17,6 +17,7 @@ Tagline: Your room, your digital companion.
 | 09-GIT-WORKFLOW.md | Commit rules, message format, branch policy |
 | 10-DEV-SETUP.md | Created by the agent in M1 and finalised in M10: how to run everything |
 | 11-PETS-AND-ASSETS.md | Open-source multi-pet system: models, animations, states, and licensing |
+| 12-AUDIO-SPEC.md | Procedural Web Audio engine: pet voices, emotion chimes, dialogue sounds, volume controls |
 | STATUS.md | Live Implemented / In progress / Planned tracker (agent updates every task) |
 | CHANGELOG.md | Human-readable log of changes (agent updates every task) |
 

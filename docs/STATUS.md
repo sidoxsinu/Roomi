@@ -27,7 +27,7 @@ Last updated: 2026-11-03
 | APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker moves window along work area, turns at screen edges (2026-11-03) |
 | APP-3 | Poll ESP32 | Implemented (mock-tested) | Polling with AbortController timeout verified (2026-11-03) |
 | APP-4 | Validate and detect disconnect | Implemented (mock-tested) | Strict shape/range validation and disconnect detection verified (2026-11-03) |
-| APP-5 | Threshold-driven states | Implemented (mock-tested) | Priority/hysteresis reaction engine; 4 companion models & state audio wired (2026-11-03) |
+| APP-5 | Threshold-driven states | Implemented (mock-tested) | Priority/hysteresis reaction engine; 4 companion models & state audio synthesized (2026-11-03) |
 | APP-6 | Readings panel | Implemented (mock-tested) | Readings panel bubble with live temp, humidity, status verified (2026-11-03) |
 | APP-7 | Click and drag | Implemented (mock-tested) | Jump reaction on click, pet vocalizations & speech sounds wired (2026-11-03) |
 | APP-8 | Idle and sleep | Implemented (mock-tested) | Idle/sleep animations with lullaby/wake procedural audio wired (2026-11-03) |
@@ -36,7 +36,7 @@ Last updated: 2026-11-03
 | APP-11 | Tray / menu-bar | Implemented (mock-tested) | Menu bar / system tray with Show/Hide and Quit verified (2026-11-03) |
 | APP-12 | Simulation mode | Implemented (mock-tested) | Simulation mode with sliders and SIMULATION badge verified (2026-11-03) |
 | APP-13 | Mouse-follow | Planned | Optional v1.1 extension (2026-11-03) |
-| APP-14 | Persistent settings | Implemented (mock-tested) | Settings storage, validation, sound options, and pet selection verified (2026-11-03) |
+| APP-14 | Persistent settings | Implemented (mock-tested) | Settings storage, validation, sound options (volume/toggle), and pet selection verified (2026-11-03) |
 | TOOL-1 | Mock sensor server | Implemented (mock-tested) | /data, /health, /control, and failure mode verified (2026-11-03) |
 
 ## Milestones
