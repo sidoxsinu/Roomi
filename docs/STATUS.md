@@ -33,7 +33,7 @@ Last updated: 2026-11-03
 | APP-8 | Idle and sleep | Planned | |
 | APP-9 | Settings window | Planned | |
 | APP-10 | Click-through | Planned | |
-| APP-11 | Tray / menu-bar | Planned | |
+| APP-11 | Tray / menu-bar | Implemented (mock-tested) | Menu bar / system tray with Show/Hide and Quit verified (2026-11-03) |
 | APP-12 | Simulation mode | Planned | |
 | APP-13 | Mouse-follow | Planned | |
 | APP-14 | Persistent settings | Planned | |
@@ -47,7 +47,7 @@ Last updated: 2026-11-03
 | M1 Mock server | Implemented | Server endpoints, controls, and docs verified (2026-11-03) |
 | M2 Firmware sensor | Written, not flashed | Error handling and DHT11/22 switch implemented (2026-11-03) |
 | M3 Firmware networking | Written, not flashed | Endpoints, Wi-Fi reconnect, mDNS, and LED implemented (2026-11-03) |
-| M4 Electron shell | Planned |
+| M4 Electron shell | Implemented (mock-tested) | Window, tray, IPC, and cross-platform launcher verified (2026-11-03) |
 | M5 Character and walking | Planned |
 | M6 Sensor integration | Planned |
 | M7 Remaining states | Planned |

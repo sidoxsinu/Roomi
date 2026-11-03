@@ -1,10 +1,15 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { createCharacterWindow } = require('./window');
+const { setupTray } = require('./tray');
 
 let mainWindow = null;
+let tray = null;
 
 function initApp() {
   mainWindow = createCharacterWindow();
+
+  // Setup system tray menu (APP-11)
+  tray = setupTray(mainWindow);
 
   // IPC listener for hover-based click-through (APP-10)
   ipcMain.on('hover:set', (_event, isHovering) => {
