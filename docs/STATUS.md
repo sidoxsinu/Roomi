@@ -44,7 +44,7 @@ Last updated: 2026-11-03
 | Milestone | Status | Notes |
 |---|---|---|
 | M0 Repo bootstrap | Implemented | Initialised git, .gitignore, docs set, skeleton created (2026-11-03) |
-| M1 Mock server | Planned |
+| M1 Mock server | Implemented | Server endpoints, controls, and docs verified (2026-11-03) |
 | M2 Firmware sensor | Planned |
 | M3 Firmware networking | Planned |
 | M4 Electron shell | Planned |
