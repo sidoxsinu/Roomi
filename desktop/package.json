@@ -19,5 +19,11 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^33.2.0"
+  },
+  "dependencies": {
+    "animejs": "^4.5.0",
+    "canvas-confetti": "^1.9.4",
+    "howler": "^2.2.4",
+    "popmotion": "^11.0.5"
   }
 }

@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-03 | build(desktop) | add open-source animation, physics, and audio libraries | APP-1, APP-5, APP-7
 - 2026-11-03 | docs | add audio system specification and sound design | APP-5, APP-7, APP-9
 - 2026-11-03 | feat(desktop) | add sound controls and preview to settings window | APP-9
 - 2026-11-03 | feat(desktop) | wire sound effects to pet reactions and interactions | APP-5, APP-7, APP-8
