@@ -21,5 +21,119 @@ html, body {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
+  cursor: grab;
+}
+
+#pet-container:active {
+  cursor: grabbing;
+}
+
+#character {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  transform-origin: bottom center;
+  animation: idle-bounce 2.6s ease-in-out infinite;
+}
+
+/* Idle Breathing Bounce */
+@keyframes idle-bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.02, 0.98);
+  }
+}
+
+/* Walking Waddle & Feet Movement */
+#pet-container.walking #character {
+  animation: walk-waddle 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes walk-waddle {
+  0% {
+    transform: rotate(-3deg) translateY(0);
+  }
+  100% {
+    transform: rotate(3deg) translateY(-5px);
+  }
+}
+
+#pet-container.walking .foot:nth-child(1) {
+  animation: foot-step-l 0.45s ease-in-out infinite alternate;
+}
+
+#pet-container.walking .foot:nth-child(2) {
+  animation: foot-step-r 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes foot-step-l {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+@keyframes foot-step-r {
+  0% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+/* Jump Reaction */
+#pet-container.jumping #character {
+  animation: jump-reaction 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes jump-reaction {
+  0% {
+    transform: scale(1.15, 0.85) translateY(0);
+  }
+  40% {
+    transform: scale(0.9, 1.15) translateY(-28px);
+  }
+  75% {
+    transform: scale(1.05, 0.95) translateY(2px);
+  }
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+}
+
+/* Cold Shivering */
+#pet-container.shivering #character {
+  animation: shiver 0.12s linear infinite;
+}
+
+@keyframes shiver {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Sleeping */
+#pet-container.sleeping #character {
+  animation: sleep-breathing 4s ease-in-out infinite;
+}
+
+@keyframes sleep-breathing {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.03, 0.96); }
+}
+
+.zzz-text {
+  animation: zzz-float 2.5s ease-in-out infinite;
+}
+
+@keyframes zzz-float {
+  0% {
+    opacity: 0;
+    transform: translate(0, 5px) scale(0.8);
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(8px, -15px) scale(1.2);
+  }
 }

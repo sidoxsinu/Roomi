@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-03 | feat(character) | add base character and idle animation | APP-8
 - 2026-11-03 | feat(desktop) | add tray menu | APP-11
 - 2026-11-03 | feat(desktop) | add transparent always-on-top window | APP-1
 - 2026-11-03 | feat(desktop) | scaffold electron app | APP-1

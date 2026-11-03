@@ -30,7 +30,7 @@ Last updated: 2026-11-03
 | APP-5 | Threshold-driven states | Planned | |
 | APP-6 | Readings panel | Planned | |
 | APP-7 | Click and drag | Planned | |
-| APP-8 | Idle and sleep | Planned | |
+| APP-8 | Idle and sleep | In progress | Base SVG character and idle animations implemented (2026-11-03) |
 | APP-9 | Settings window | Planned | |
 | APP-10 | Click-through | Planned | |
 | APP-11 | Tray / menu-bar | Implemented (mock-tested) | Menu bar / system tray with Show/Hide and Quit verified (2026-11-03) |
