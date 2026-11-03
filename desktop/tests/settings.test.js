@@ -42,6 +42,20 @@ describe('Settings Validation & Merging (APP-9, APP-14)', () => {
     assert.strictEqual(res.thresholds.tempLow, DEFAULT_SETTINGS.thresholds.tempLow);
   });
 
+  it('validates selectedPet and falls back to default on invalid pet name', () => {
+    const valid = validateAndMergeSettings({ selectedPet: 'cat' });
+    assert.strictEqual(valid.selectedPet, 'cat');
+
+    const penguin = validateAndMergeSettings({ selectedPet: 'penguin' });
+    assert.strictEqual(penguin.selectedPet, 'penguin');
+
+    const robot = validateAndMergeSettings({ selectedPet: 'robot' });
+    assert.strictEqual(robot.selectedPet, 'robot');
+
+    const invalid = validateAndMergeSettings({ selectedPet: 'dinosaur' });
+    assert.strictEqual(invalid.selectedPet, DEFAULT_SETTINGS.selectedPet);
+  });
+
   it('persists and loads settings from temporary disk file', () => {
     const tempFile = path.join(os.tmpdir(), `roomi-test-settings-${Date.now()}.json`);
     try {

@@ -14,8 +14,11 @@ const DEFAULT_SETTINGS = {
   walkSpeedPxPerSec: 50,
   sleepAfterMinutes: 5,
   sound: false,
-  simulation: false
+  simulation: false,
+  selectedPet: 'blob'
 };
+
+const ALLOWED_PETS = ['blob', 'cat', 'penguin', 'robot'];
 
 /**
  * Validates and merges partial settings with defaults.
@@ -70,6 +73,11 @@ function validateAndMergeSettings(raw = {}) {
   merged.sound = Boolean(merged.sound);
   merged.simulation = Boolean(merged.simulation);
 
+  // Validate Selected Pet (APP-9 extension)
+  if (typeof merged.selectedPet !== 'string' || !ALLOWED_PETS.includes(merged.selectedPet)) {
+    merged.selectedPet = DEFAULT_SETTINGS.selectedPet;
+  }
+
   return merged;
 }
 
@@ -118,6 +126,7 @@ class SettingsManager {
 module.exports = {
   SettingsManager,
   validateAndMergeSettings,
-  DEFAULT_SETTINGS
+  DEFAULT_SETTINGS,
+  ALLOWED_PETS
 };
 
