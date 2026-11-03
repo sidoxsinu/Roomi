@@ -37,7 +37,7 @@ Last updated: 2026-11-03
 | APP-12 | Simulation mode | Planned | |
 | APP-13 | Mouse-follow | Planned | |
 | APP-14 | Persistent settings | Planned | |
-| TOOL-1 | Mock sensor server | Planned | |
+| TOOL-1 | Mock sensor server | In progress | Basic /data and /health endpoints implemented (2026-11-03) |
 
 ## Milestones
 
