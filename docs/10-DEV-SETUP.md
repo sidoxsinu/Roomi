@@ -1,6 +1,6 @@
-# Development and Setup Guide
+# ROOMI Development and Demonstration Setup Guide
 
-This document provides complete instructions to set up, run, and test ROOMI on **macOS**, **Windows**, and **Linux**.
+This guide provides end-to-end instructions to set up, test, and demonstrate ROOMI on **macOS**, **Windows**, and **Linux**.
 
 ---
 
@@ -8,8 +8,12 @@ This document provides complete instructions to set up, run, and test ROOMI on *
 
 - **Node.js**: v18.x or v20.x+ LTS (includes `npm`).
 - **Git**: Installed and configured.
+- **Hardware (Optional for initial demo)**:
+  - ESP32 Development Board (NodeMCU / WROOM-32).
+  - DHT11 or DHT22 Temperature and Humidity Sensor.
+  - Micro-USB cable, breadboard, jumper wires.
 
-Verify your environment:
+Verify tools on your command line:
 ```bash
 node -v
 npm -v
@@ -18,94 +22,146 @@ git --version
 
 ---
 
-## 2. Mock Sensor Server (TOOL-1)
+## 2. Desktop App Setup
 
-The mock sensor server allows development, testing, and demonstration without physical ESP32 hardware. It implements the exact HTTP contract specified in `docs/02-ARCHITECTURE.md`.
+### A. Install Dependencies
 
-### Starting the Server
-
-The server has **zero third-party dependencies** and runs on any platform:
+Open a terminal in the project root:
 
 **macOS / Linux:**
 ```bash
-node tools/mock-sensor-server/server.js
+cd desktop
+npm install
 ```
 
-**Windows (cmd / PowerShell):**
+**Windows (Command Prompt / PowerShell):**
 ```cmd
-node tools\mock-sensor-server\server.js
+cd desktop
+npm install
 ```
 
-By default, the server listens on `http://localhost:8080` (or `0.0.0.0:8080`).
+### B. Run the Unit Test Suite
 
-### Command-Line Options
-
-You can pass CLI flags when starting the server:
-
-| Flag | Default | Description |
-|---|---|---|
-| `--port <number>` | `8080` | Port to listen on (or set `PORT` environment variable) |
-| `--temp <number>` | `24.5` | Initial temperature in °C |
-| `--humidity <number>` | `55.0` | Initial relative humidity in % |
-| `--fail` | (off) | Start with `sensor_status: "error"` and null readings |
-| `--drift` | (off) | Enable realistic gentle random drift every 3 seconds |
-| `--light <number>` | `null` | Optional initial raw ADC light reading (0-4095) |
-| `--sound <number>` | `null` | Optional initial raw ADC sound reading (0-4095) |
-
-**Examples:**
+Execute the automated test suite covering walker physics, sensor validation, priority rules, hysteresis, and failure handling:
 
 ```bash
-# Start on port 8080 with high temperature (hot state testing)
-node tools/mock-sensor-server/server.js --temp 32.5 --humidity 50
-
-# Start in failure mode (disconnected / error testing)
-node tools/mock-sensor-server/server.js --fail
-
-# Start on port 9000 with random drift enabled
-node tools/mock-sensor-server/server.js --port 9000 --drift
+npm test
 ```
+*Expected: All 27 unit tests pass with 0 failures.*
 
 ---
 
-### Dynamic Control Endpoints
+## 3. Demo Mode 1: Using the Mock Sensor Server (TOOL-1)
 
-You can dynamically adjust readings and simulate hardware events while the server is running without restarting it:
+This mode allows complete demonstration of all IoT reactions without physical hardware.
 
-#### 1. Querying Data
-- `GET http://localhost:8080/data`  
-  Returns the JSON payload conforming to the contract:
-  ```json
-  {
-    "device_id": "roomi-mock-node",
-    "temperature": 24.5,
-    "humidity": 55,
-    "light_raw": null,
-    "sound_raw": null,
-    "sensor_status": "online",
-    "uptime_s": 42
-  }
-  ```
+### Step 1: Start the Mock Sensor Server
 
-- `GET http://localhost:8080/health`  
-  Returns `200 ok`.
+Open Terminal 1:
 
-#### 2. Changing Conditions via URL (Quick Browser / Curl)
-- Set temperature to 31°C and humidity to 75%:
-  ```bash
-  curl "http://localhost:8080/control?temp=31&humidity=75"
-  ```
-- Simulate sensor failure (sensor disconnected):
-  ```bash
-  curl "http://localhost:8080/control?status=error"
-  ```
-- Restore normal sensor operation:
-  ```bash
-  curl "http://localhost:8080/control?status=online"
-  ```
-
-#### 3. Changing Conditions via JSON (POST)
+**macOS / Linux:**
 ```bash
-curl -X POST http://localhost:8080/control \
-  -H "Content-Type: application/json" \
-  -d '{"temperature": 16.0, "humidity": 40.0, "sensor_status": "online"}'
+node tools/mock-sensor-server/server.js --port 8080 --drift
 ```
+
+**Windows:**
+```cmd
+node tools\mock-sensor-server\server.js --port 8080 --drift
+```
+
+The mock server will start on `http://localhost:8080` with initial conditions:
+`Temp: 24.5 °C | Humidity: 55% | Status: online`.
+
+### Step 2: Start ROOMI Desktop App
+
+Open Terminal 2:
+
+```bash
+cd desktop
+npm start
+```
+
+### Step 3: What You Should See
+1. **Desktop Companion**: ROOMI appears at the bottom-right of your screen above all windows.
+2. **Walking Animation**: ROOMI walks left and right across your real screen, waddling cutely and turning smoothly at screen edges.
+3. **Hover & Info Panel**: Move your mouse over ROOMI. A semi-transparent info bubble displays live temperature, humidity, and an "Online" green status dot.
+4. **Click-Through**: Move your cursor outside ROOMI's body; your clicks pass directly through to windows underneath.
+5. **Click & Drag**:
+   - **Click** ROOMI: He performs an expressive jump reaction and chirps a friendly message.
+   - **Drag** ROOMI: Left-click and drag him anywhere on your desktop; releasing snaps him gracefully back to the work area bottom.
+
+---
+
+## 4. Live Environmental Failure & Reaction Drills
+
+With both the server and app running, open Terminal 3 to simulate environmental changes:
+
+### Test A: Warming Up (Hot State Reaction)
+Set temperature to 33.5 °C (above 30.0 °C threshold):
+```bash
+curl "http://localhost:8080/control?temp=33.5"
+```
+*Result: Within 2 poll intervals (~6s), ROOMI turns pink/flushed, sweat drops appear, walking speed slows to a panting waddle, speech bubble reads "It's toasty in here!", and the info panel highlights the high temperature.*
+
+### Test B: Cooling Down (Cold State Reaction)
+Set temperature to 16.0 °C (below 18.0 °C threshold):
+```bash
+curl "http://localhost:8080/control?temp=16.0"
+```
+*Result: ROOMI turns icy blue, shiver lines appear, he chatters his teeth, and shivers across the screen.*
+
+### Test C: High Humidity (Muggy/Humid State)
+Set humidity to 82% (above 70% threshold):
+```bash
+curl "http://localhost:8080/control?temp=24.0&humidity=82"
+```
+*Result: ROOMI shows a droopy, muggy face with speech bubble "Feels muggy! 💧".*
+
+### Test D: Hardware Disconnect / Network Failure
+Simulate sensor disconnection or network drop:
+```bash
+curl "http://localhost:8080/control?status=error"
+```
+*Result: ROOMI turns monochrome slate gray, a question mark appears over his head, mouth becomes an 'O', and he wanders confusedly. Info panel marks "Offline".*
+
+Restore normal signal:
+```bash
+curl "http://localhost:8080/control?status=online&temp=24.5&humidity=55"
+```
+*Result: ROOMI immediately recovers to his smiling, happy self!*
+
+---
+
+## 5. Demo Mode 2: Built-in Simulation Mode (APP-12)
+
+You can run ROOMI completely standalone with GUI simulation sliders:
+
+```bash
+cd desktop
+npm run start:sim
+```
+* Or right-click the system tray icon (menu bar on macOS / taskbar tray on Windows) and select **Settings...**.
+* Enable the **"Hardware Simulation (Demo Mode)"** checkbox.
+* Move the temperature and humidity sliders in real-time, or click **"Simulate Sensor Disconnect"** to see instant character reactions!
+
+---
+
+## 6. Physical ESP32 Hardware Bring-Up (When Hardware is Ready)
+
+### Pin Connections (per `docs/03-HARDWARE.md`)
+| Sensor Pin | ESP32 Pin |
+|---|---|
+| DHT VCC | 3V3 |
+| DHT GND | GND |
+| DHT DATA | GPIO 4 |
+| Status LED | GPIO 2 (onboard LED) |
+| LDR (optional) | GPIO 34 (ADC1) |
+| Sound (optional) | GPIO 35 (ADC1) |
+
+### Flashing Firmware
+1. Open `firmware/roomi_esp32/roomi_esp32.ino` in Arduino IDE or VS Code with PlatformIO.
+2. Create `firmware/roomi_esp32/config.h` (copy from `config.example.h`) and fill in your local Wi-Fi SSID and Password.
+3. Select board: **ESP32 Dev Module**, upload speed 921600, Serial monitor 115200.
+4. Upload sketch and note the printed IP address (e.g. `192.168.1.120`).
+5. Open ROOMI Settings on your desktop, set Host to `192.168.1.120` (or `roomi.local`), click Save.
+6. ROOMI will connect to the physical ESP32 and reflect your real room conditions!
