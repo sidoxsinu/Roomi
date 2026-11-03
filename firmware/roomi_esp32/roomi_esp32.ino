@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <ESPmDNS.h>
 #include <DHT.h>
 
 #if __has_include("config.h")
@@ -85,6 +86,17 @@ void setupHttpServer() {
   Serial.println("[ROOMI] [HTTP] Web server started on port 80.");
 }
 
+void setupMdns() {
+  if (MDNS.begin(HOSTNAME)) {
+    MDNS.addService("http", "tcp", 80);
+    Serial.print("[ROOMI] [mDNS] Responder started: http://");
+    Serial.print(HOSTNAME);
+    Serial.println(".local");
+  } else {
+    Serial.println("[ROOMI] [mDNS] [WARN] Failed to set up MDNS responder.");
+  }
+}
+
 void checkWiFiConnection() {
   unsigned long now = millis();
   if (WiFi.status() == WL_CONNECTED) {
@@ -93,6 +105,7 @@ void checkWiFiConnection() {
       Serial.print("[ROOMI] [WiFi] Connected! IP Address: ");
       Serial.println(WiFi.localIP());
       setupHttpServer();
+      setupMdns();
     }
     return;
   }
@@ -109,7 +122,7 @@ void checkWiFiConnection() {
 void updateStatusLed() {
   unsigned long now = millis();
   if (sensorStatus == "error") {
-    // Fast blink: 150 ms period
+    // Fast blink: 150 ms period on sensor failure
     if (now - lastLedToggle >= 150) {
       lastLedToggle = now;
       ledState = !ledState;

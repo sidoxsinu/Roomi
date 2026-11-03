@@ -20,8 +20,8 @@ Last updated: 2026-11-03
 | FW-3 | GET /data | Written, not flashed | Cached JSON response with CORS implemented (2026-11-03) |
 | FW-4 | Error status, no fake values | Written, not flashed | Reports error on isnan(), never sends fabricated numbers (2026-11-03) |
 | FW-5 | GET /health | Written, not flashed | Returns 200 ok (2026-11-03) |
-| FW-6 | mDNS roomi.local | Planned | |
-| FW-7 | LED indicator | Planned | |
+| FW-6 | mDNS roomi.local | Written, not flashed | ESPmDNS setup with HOSTNAME (2026-11-03) |
+| FW-7 | LED indicator | Written, not flashed | Fast blink (error), slow blink (Wi-Fi), solid (OK) (2026-11-03) |
 | FW-8 | Optional LDR and sound | Planned | |
 | APP-1 | Transparent always-on-top window | Planned | |
 | APP-2 | Walks across real desktop | Planned | |
@@ -46,7 +46,7 @@ Last updated: 2026-11-03
 | M0 Repo bootstrap | Implemented | Initialised git, .gitignore, docs set, skeleton created (2026-11-03) |
 | M1 Mock server | Implemented | Server endpoints, controls, and docs verified (2026-11-03) |
 | M2 Firmware sensor | Written, not flashed | Error handling and DHT11/22 switch implemented (2026-11-03) |
-| M3 Firmware networking | Planned |
+| M3 Firmware networking | Written, not flashed | Endpoints, Wi-Fi reconnect, mDNS, and LED implemented (2026-11-03) |
 | M4 Electron shell | Planned |
 | M5 Character and walking | Planned |
 | M6 Sensor integration | Planned |
