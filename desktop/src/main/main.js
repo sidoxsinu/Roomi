@@ -91,6 +91,17 @@ function handleSensorReading(reading) {
       emitCharacterState(currentResolvedState, resolved.reasons);
     }
   }
+
+  // Adjust walker speed based on character state (06-SPEC)
+  if (walker) {
+    if (currentResolvedState === 'hot') {
+      walker.speedPxPerSec = 32; // Slower walking when hot
+    } else if (currentResolvedState === 'cold') {
+      walker.speedPxPerSec = 36; // Shivering short steps
+    } else {
+      walker.speedPxPerSec = 50; // Normal brisk pace
+    }
+  }
 }
 
 function handleSensorStatus({ connected, reason }) {
