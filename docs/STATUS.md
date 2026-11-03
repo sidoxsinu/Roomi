@@ -29,7 +29,7 @@ Last updated: 2026-11-03
 | APP-4 | Validate and detect disconnect | Planned | |
 | APP-5 | Threshold-driven states | Planned | |
 | APP-6 | Readings panel | Planned | |
-| APP-7 | Click and drag | Planned | |
+| APP-7 | Click and drag | Implemented (mock-tested) | Jump reaction on click, manual drag repositioning verified (2026-11-03) |
 | APP-8 | Idle and sleep | In progress | Base SVG character and idle animations implemented (2026-11-03) |
 | APP-9 | Settings window | Planned | |
 | APP-10 | Click-through | Implemented (mock-tested) | Forwarded mousemove hover toggling implemented (2026-11-03) |
