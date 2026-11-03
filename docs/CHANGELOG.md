@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-03 | feat(desktop) | add sensor client with validation | APP-3, APP-4
 - 2026-11-03 | feat(character) | add sleeping state | APP-8
 - 2026-11-03 | feat(desktop) | add click and drag interactions | APP-7
 - 2026-11-03 | feat(desktop) | add click-through on transparent area | APP-10

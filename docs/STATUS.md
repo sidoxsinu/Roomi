@@ -25,8 +25,8 @@ Last updated: 2026-11-03
 | FW-8 | Optional LDR and sound | Planned | |
 | APP-1 | Transparent always-on-top window | Implemented (mock-tested) | Frameless, transparent, alwaysOnTop window verified (2026-11-03) |
 | APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker moves window along work area, turns at screen edges (2026-11-03) |
-| APP-3 | Poll ESP32 | Planned | |
-| APP-4 | Validate and detect disconnect | Planned | |
+| APP-3 | Poll ESP32 | Implemented (mock-tested) | Polling with AbortController timeout verified (2026-11-03) |
+| APP-4 | Validate and detect disconnect | Implemented (mock-tested) | Strict shape/range validation and disconnect detection verified (2026-11-03) |
 | APP-5 | Threshold-driven states | Planned | |
 | APP-6 | Readings panel | Planned | |
 | APP-7 | Click and drag | Implemented (mock-tested) | Jump reaction on click, manual drag repositioning verified (2026-11-03) |
