@@ -23,7 +23,7 @@ Last updated: 2026-11-03
 | FW-6 | mDNS roomi.local | Written, not flashed | ESPmDNS setup with HOSTNAME (2026-11-03) |
 | FW-7 | LED indicator | Written, not flashed | Fast blink (error), slow blink (Wi-Fi), solid (OK) (2026-11-03) |
 | FW-8 | Optional LDR and sound | Planned | |
-| APP-1 | Transparent always-on-top window | In progress | Electron app scaffolded and launches window (2026-11-03) |
+| APP-1 | Transparent always-on-top window | Implemented (mock-tested) | Frameless, transparent, alwaysOnTop window verified (2026-11-03) |
 | APP-2 | Walks across real desktop | Planned | |
 | APP-3 | Poll ESP32 | Planned | |
 | APP-4 | Validate and detect disconnect | Planned | |

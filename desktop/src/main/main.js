@@ -1,29 +1,39 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
+const { app, BrowserWindow, ipcMain } = require('electron');
+const { createCharacterWindow } = require('./window');
 
-function createWindow() {
-  const win = new BrowserWindow({
-    width: 200,
-    height: 220,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true
+let mainWindow = null;
+
+function initApp() {
+  mainWindow = createCharacterWindow();
+
+  // IPC listener for hover-based click-through (APP-10)
+  ipcMain.on('hover:set', (_event, isHovering) => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      if (isHovering) {
+        mainWindow.setIgnoreMouseEvents(false);
+      } else {
+        mainWindow.setIgnoreMouseEvents(true, { forward: true });
+      }
     }
   });
 
-  win.loadFile(path.join(__dirname, '../renderer/index.html'));
-  return win;
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 }
 
 app.whenReady().then(() => {
-  createWindow();
+  initApp();
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) {
+      initApp();
+    }
   });
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
-
