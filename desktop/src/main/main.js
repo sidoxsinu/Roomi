@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('path');
 const { createCharacterWindow } = require('./window');
 const { setupTray } = require('./tray');
-const { Walker } = require('./walker');
+const { Walker, clampToWorkArea } = require('./walker');
 const { SensorClient } = require('./sensorClient');
 const { resolveState } = require('./reactionEngine');
 const { SettingsManager } = require('./settings');
@@ -25,6 +25,23 @@ let isSleeping = false;
 let currentResolvedState = 'happy';
 let stateTracker = { candidate: 'happy', count: 0 };
 let lastReading = null;
+
+function setSafeWindowPosition(x, y) {
+  if (!mainWindow || mainWindow.isDestroyed()) return null;
+
+  const workArea = screen.getDisplayMatching(mainWindow.getBounds()).workArea;
+  const [windowWidth, windowHeight] = mainWindow.getSize();
+  const position = clampToWorkArea({
+    x,
+    y,
+    workArea,
+    windowWidth,
+    windowHeight
+  });
+
+  mainWindow.setPosition(Math.round(position.x), Math.round(position.y));
+  return position;
+}
 
 // Simulation Mode State (APP-12)
 let isSimulationMode = false;
@@ -325,9 +342,9 @@ function initApp() {
     if (!mainWindow || mainWindow.isDestroyed() || !dragOriginWinPos) return;
     const calcX = dragOriginWinPos[0] + dx;
     const calcY = dragOriginWinPos[1] + dy;
-    const newX = Number.isFinite(calcX) ? Math.round(calcX) : dragOriginWinPos[0];
-    const newY = Number.isFinite(calcY) ? Math.round(calcY) : dragOriginWinPos[1];
-    mainWindow.setPosition(newX, newY);
+    const position = setSafeWindowPosition(calcX, calcY);
+    const newX = Math.round(position.x);
+    const newY = Math.round(position.y);
 
     const now = Date.now();
     dragPositions.push({ time: now, pos: [newX, newY] });
@@ -401,9 +418,9 @@ function initApp() {
       bounds: { minX, maxX, minY },
       onStep: ({ x, y, vx, vy, isAirborne }) => {
         if (!mainWindow || mainWindow.isDestroyed()) return;
-        const safeX = Number.isFinite(x) ? Math.round(x) : minX;
-        const safeY = Number.isFinite(y) ? Math.round(y) : floorY;
-        mainWindow.setPosition(safeX, safeY);
+        const position = setSafeWindowPosition(x, y);
+        const safeX = Math.round(position.x);
+        const safeY = Math.round(position.y);
         mainWindow.webContents.send('character:physics', { x: safeX, y: safeY, vx, vy, isAirborne });
       },
       onBounce: ({ impactVelocity, type, final }) => {
@@ -412,8 +429,15 @@ function initApp() {
       },
       onRest: ({ x, y }) => {
         if (!mainWindow || mainWindow.isDestroyed()) return;
-        const safeX = Number.isFinite(x) ? Math.round(x) : minX;
-        const safeY = Number.isFinite(y) ? Math.round(y) : floorY;
+        const position = clampToWorkArea({
+          x,
+          y,
+          workArea,
+          windowWidth: winSize[0],
+          windowHeight: winSize[1]
+        });
+        const safeX = Math.round(position.x);
+        const safeY = Math.round(position.y);
         if (walker) {
           walker.setPosition(safeX, safeY);
           walker.resume('drag');

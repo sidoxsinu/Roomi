@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
-const { stepWalker } = require('../src/main/walker');
+const { stepWalker, clampToWorkArea } = require('../src/main/walker');
 
 describe('Walker step math and edge turning (APP-2)', () => {
   const workArea = { x: 0, y: 0, width: 1920, height: 1080 };
@@ -78,5 +78,16 @@ describe('Walker step math and edge turning (APP-2)', () => {
     assert.strictEqual(res.dir, 'right');
     assert.strictEqual(res.turned, true);
   });
-});
 
+  it('keeps the window inside the display work area', () => {
+    const res = clampToWorkArea({
+      x: 900,
+      y: 1200,
+      workArea,
+      windowWidth,
+      windowHeight
+    });
+
+    assert.deepStrictEqual(res, { x: 900, y: 860 });
+  });
+});

@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-04 | fix(desktop) | clamp pet movement inside display barrier and announce visibility | APP-2, APP-7
 - 2026-11-04 | fix(desktop) | continuously keep pet visible and connect demo sensor | APP-1, APP-3, APP-11
 - 2026-11-04 | fix(desktop) | keep pet window topmost and show readings panel | APP-1, APP-6
 - 2026-11-04 | fix(desktop) | use the character window display for movement bounds | APP-2, APP-7

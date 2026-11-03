@@ -24,12 +24,12 @@ Last updated: 2026-11-04
 | FW-7 | LED indicator | Written, not flashed | Fast blink (error), slow blink (Wi-Fi), solid (OK) (2026-11-03) |
 | FW-8 | Optional LDR and sound | Written, not flashed | ADC1 analogRead on GPIO 34/35 behind ENABLE flags (2026-11-03) |
 | APP-1 | Transparent always-on-top window | Implemented (mock-tested) | Frameless transparent window reasserts topmost state every second, moves to top, and cannot be hidden from the tray (2026-11-04) |
-| APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker and drag bounds follow the display containing the character window; gravity drop, ceiling rebound & bounce physics verified (2026-11-04) |
+| APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker, drag, and physics movement are clamped inside the active display work area; gravity drop and edge physics verified (2026-11-04) |
 | APP-3 | Poll ESP32 | Implemented (mock-tested) | Polling with AbortController timeout verified against mock server on localhost:8080 (2026-11-04) |
 | APP-4 | Validate and detect disconnect | Implemented (mock-tested) | Strict shape/range validation and disconnect detection verified (2026-11-03) |
 | APP-5 | Threshold-driven states | Implemented (mock-tested) | Priority/hysteresis reaction engine; 4 companion models & state audio synthesized (2026-11-03) |
 | APP-6 | Readings panel | Implemented (mock-tested) | Readings panel is visible on startup and shows live temp, humidity, and status; unavailable readings remain `--` (2026-11-04) |
-| APP-7 | Click and drag | Implemented (mock-tested) | Jump reaction, pet vocalizations, drag tilt, gravity drop, ceiling bounce, squash-stretch landing impact (2026-11-04) |
+| APP-7 | Click and drag | Implemented (mock-tested) | Drag and physics movement cannot pass the virtual display barrier; jump reaction, vocalizations, gravity drop, ceiling bounce, and landing impact verified (2026-11-04) |
 | APP-8 | Idle and sleep | Implemented (mock-tested) | Idle/sleep animations with lullaby/wake procedural audio wired (2026-11-03) |
 | APP-9 | Settings window | Implemented (mock-tested) | Settings window with live IPC, companion pet selector, sound controls/previews, and disclaimer verified (2026-11-03) |
 | APP-10 | Click-through | Implemented (mock-tested) | Forwarded mousemove hover toggling implemented (2026-11-03) |

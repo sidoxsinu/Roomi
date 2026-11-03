@@ -19,6 +19,10 @@ window.addEventListener('DOMContentLoaded', () => {
   const character = new Character(characterTarget);
   const soundFx = typeof SoundFxEngine !== 'undefined' ? new SoundFxEngine() : null;
 
+  setTimeout(() => {
+    showSpeech('I am staying safely on screen! 🛡️', 5000);
+  }, 400);
+
   // Confetti celebration helper
   function fireConfetti() {
     if (typeof confetti === 'function') {

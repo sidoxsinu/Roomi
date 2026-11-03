@@ -28,6 +28,18 @@ function stepWalker({ x, y, dir, speedPxPerSec, dtSec, workArea, windowWidth, wi
   };
 }
 
+function clampToWorkArea({ x, y, workArea, windowWidth, windowHeight }) {
+  const minX = workArea.x;
+  const maxX = workArea.x + workArea.width - windowWidth;
+  const minY = workArea.y;
+  const maxY = workArea.y + workArea.height - windowHeight;
+
+  return {
+    x: Math.max(minX, Math.min(maxX, Number.isFinite(x) ? x : minX)),
+    y: Math.max(minY, Math.min(maxY, Number.isFinite(y) ? y : maxY))
+  };
+}
+
 class Walker {
   constructor(window, options = {}) {
     this.window = window;
@@ -176,4 +188,4 @@ class Walker {
   }
 }
 
-module.exports = { Walker, stepWalker };
+module.exports = { Walker, stepWalker, clampToWorkArea };
