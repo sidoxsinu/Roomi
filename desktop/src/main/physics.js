@@ -25,37 +25,43 @@ class PhysicsDropEngine {
    * @param {number} params.vx Initial horizontal velocity (px/s)
    * @param {number} params.vy Initial vertical velocity (px/s)
    * @param {number} params.floorY Target floor Y position
-   * @param {Object} params.bounds { minX, maxX }
+   * @param {Object} params.bounds { minX, maxX, minY }
    * @param {Function} params.onStep Callback on every physics tick ({ x, y, vx, vy })
    * @param {Function} params.onBounce Callback on floor/wall impact ({ impactVelocity, x, y })
    * @param {Function} params.onRest Callback when physical movement has fully settled ({ x, y })
    */
   drop({
-    startX,
-    startY,
+    startX = 0,
+    startY = 0,
     vx = 0,
     vy = 0,
-    floorY,
-    bounds = { minX: 0, maxX: 1920 },
+    floorY = 600,
+    bounds = { minX: 0, maxX: 1920, minY: 0 },
     onStep = () => {},
     onBounce = () => {},
     onRest = () => {}
   }) {
     this.stop();
 
+    const minX = Number.isFinite(bounds.minX) ? bounds.minX : 0;
+    const maxX = Number.isFinite(bounds.maxX) ? bounds.maxX : 1920;
+    const minY = Number.isFinite(bounds.minY) ? bounds.minY : 0;
+    const safeFloorY = Number.isFinite(floorY) ? floorY : 600;
+
+    let x = Number.isFinite(startX) ? startX : minX;
+    let y = Number.isFinite(startY) ? startY : minY;
+    let currentVx = Number.isFinite(vx) ? Math.max(-1000, Math.min(1000, vx)) : 0;
+    let currentVy = Number.isFinite(vy) ? Math.max(-1400, Math.min(1400, vy)) : 0;
+
     // Already on or below the floor
-    if (startY >= floorY && Math.abs(vy) < 10) {
-      onStep({ x: Math.max(bounds.minX, Math.min(bounds.maxX, startX)), y: floorY, vx: 0, vy: 0, isAirborne: false });
-      onRest({ x: Math.max(bounds.minX, Math.min(bounds.maxX, startX)), y: floorY });
+    if (y >= safeFloorY && Math.abs(currentVy) < 10) {
+      const clampedX = Math.max(minX, Math.min(maxX, x));
+      onStep({ x: clampedX, y: safeFloorY, vx: 0, vy: 0, isAirborne: false });
+      onRest({ x: clampedX, y: safeFloorY });
       return;
     }
 
     this.isRunning = true;
-    let x = startX;
-    let y = startY;
-    let currentVx = Math.max(-1000, Math.min(1000, vx));
-    let currentVy = Math.max(-1200, Math.min(1200, vy));
-
     let lastTime = Date.now();
     const intervalMs = 16; // ~60 FPS update loop
 
@@ -64,7 +70,7 @@ class PhysicsDropEngine {
       const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000)); // Delta time in seconds
       lastTime = now;
 
-      // Apply Gravity
+      // Apply Gravity (downward acceleration)
       currentVy += this.gravity * dt;
 
       // Apply Horizontal Air Drag
@@ -74,20 +80,27 @@ class PhysicsDropEngine {
       x += currentVx * dt;
       y += currentVy * dt;
 
+      // Ceiling Collision (Reaching Top of Screen)
+      if (y <= minY) {
+        y = minY;
+        currentVy = Math.abs(currentVy) * this.restitution; // Rebound downward under gravity
+        onBounce({ impactVelocity: Math.abs(currentVy), x, y, type: 'ceiling' });
+      }
+
       // Wall Collisions
-      if (x < bounds.minX) {
-        x = bounds.minX;
-        currentVx = -currentVx * this.wallRestitution;
+      if (x < minX) {
+        x = minX;
+        currentVx = Math.abs(currentVx) * this.wallRestitution;
         onBounce({ impactVelocity: Math.abs(currentVx), x, y, type: 'wall' });
-      } else if (x > bounds.maxX) {
-        x = bounds.maxX;
-        currentVx = -currentVx * this.wallRestitution;
+      } else if (x > maxX) {
+        x = maxX;
+        currentVx = -Math.abs(currentVx) * this.wallRestitution;
         onBounce({ impactVelocity: Math.abs(currentVx), x, y, type: 'wall' });
       }
 
       // Floor Collision
-      if (y >= floorY) {
-        y = floorY;
+      if (y >= safeFloorY) {
+        y = safeFloorY;
         const impactSpeed = Math.abs(currentVy);
 
         // Check if settled
@@ -96,8 +109,10 @@ class PhysicsDropEngine {
           currentVx = 0;
           this.stop();
           onBounce({ impactVelocity: impactSpeed, x, y, type: 'floor', final: true });
-          onStep({ x, y, vx: 0, vy: 0, isAirborne: false });
-          onRest({ x, y });
+          const finalX = Number.isFinite(x) ? Math.round(x) : minX;
+          const finalY = Math.round(safeFloorY);
+          onStep({ x: finalX, y: finalY, vx: 0, vy: 0, isAirborne: false });
+          onRest({ x: finalX, y: finalY });
           return;
         } else {
           // Bounce
@@ -106,7 +121,9 @@ class PhysicsDropEngine {
         }
       }
 
-      onStep({ x, y, vx: currentVx, vy: currentVy, isAirborne: y < floorY });
+      const outX = Number.isFinite(x) ? Math.round(x) : minX;
+      const outY = Number.isFinite(y) ? Math.round(y) : safeFloorY;
+      onStep({ x: outX, y: outY, vx: currentVx, vy: currentVy, isAirborne: outY < safeFloorY });
     }, intervalMs);
   }
 
@@ -122,3 +139,4 @@ class PhysicsDropEngine {
 if (typeof module !== 'undefined') {
   module.exports = { PhysicsDropEngine };
 }
+

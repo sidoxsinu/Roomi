@@ -74,4 +74,52 @@ describe('Physics Drop & Gravity Engine', () => {
 
     assert.ok(restCalled);
   });
+
+  it('rebounds downward off the ceiling when thrown upwards to the top of the screen', (t, done) => {
+    const physics = new PhysicsDropEngine({ gravity: 3000, restitution: 0.5 });
+    let hitCeiling = false;
+
+    physics.drop({
+      startX: 400,
+      startY: 50,
+      vx: 0,
+      vy: -800, // Thrown violently upwards towards top ceiling at minY: 20
+      floorY: 600,
+      bounds: { minX: 0, maxX: 1920, minY: 20 },
+      onBounce: ({ type }) => {
+        if (type === 'ceiling') hitCeiling = true;
+      },
+      onRest: ({ x, y }) => {
+        assert.ok(hitCeiling, 'Expected ceiling bounce when reaching top');
+        assert.strictEqual(y, 600);
+        assert.strictEqual(x, 400);
+        done();
+      }
+    });
+  });
+
+  it('safely handles NaN and non-finite coordinates without throwing or emitting NaN', (t, done) => {
+    const physics = new PhysicsDropEngine();
+
+    physics.drop({
+      startX: NaN,
+      startY: NaN,
+      vx: NaN,
+      vy: NaN,
+      floorY: NaN,
+      bounds: { minX: 0, maxX: 1920, minY: 0 },
+      onStep: ({ x, y, vx, vy }) => {
+        assert.ok(Number.isFinite(x), `Expected x to be finite, got ${x}`);
+        assert.ok(Number.isFinite(y), `Expected y to be finite, got ${y}`);
+        assert.ok(Number.isFinite(vx), `Expected vx to be finite, got ${vx}`);
+        assert.ok(Number.isFinite(vy), `Expected vy to be finite, got ${vy}`);
+      },
+      onRest: ({ x, y }) => {
+        assert.ok(Number.isFinite(x));
+        assert.ok(Number.isFinite(y));
+        done();
+      }
+    });
+  });
 });
+

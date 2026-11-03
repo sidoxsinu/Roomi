@@ -34,9 +34,11 @@ When the user lifts the companion character and releases it in mid-air, ROOMI en
    $$v_y' = -v_y \times e \quad \text{where } e = 0.42$$
    If $|v_y| < 45 \text{ px/s}$, the character transitions to rest ($v_y = 0, v_x = 0$), snaps cleanly to the floor, and signals the Walker engine to resume normal walking.
 
-4. **Screen Edge & Wall Bouncing**:
-   When $x \le \text{minX}$ or $x \ge \text{maxX}$:
-   $$v_x' = -v_x \times e_{\text{wall}} \quad \text{where } e_{\text{wall}} = 0.50$$
+4. **Ceiling & Screen Edge Bouncing**:
+   - **Top Ceiling Collision**: When thrown violently upwards ($v_y < 0$ and $y \le \text{minY}$), the pet rebounds downward off the ceiling under natural gravity:
+     $$v_y' = |v_y| \times e \quad \text{where } e = 0.42$$
+   - **Side Wall Collisions**: When $x \le \text{minX}$ or $x \ge \text{maxX}$:
+     $$v_x' = -v_x \times e_{\text{wall}} \quad \text{where } e_{\text{wall}} = 0.50$$
 
 ---
 
@@ -71,3 +73,4 @@ While interacting with the pet via mouse drag:
 ## 4. Joyful Celebrations (`canvas-confetti`)
 
 When room conditions improve into the `happy` comfort zone, or upon positive milestones, ROOMI triggers a celebratory multi-colored confetti burst accompanied by an ascending 4-tone celebration chime ($C_5, E_5, G_5, C_6$).
+

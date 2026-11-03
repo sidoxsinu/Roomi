@@ -323,8 +323,10 @@ function initApp() {
   ipcMain.on('drag:move', (_event, { dx, dy }) => {
     resetInactivity();
     if (!mainWindow || mainWindow.isDestroyed() || !dragOriginWinPos) return;
-    const newX = Math.round(dragOriginWinPos[0] + dx);
-    const newY = Math.round(dragOriginWinPos[1] + dy);
+    const calcX = dragOriginWinPos[0] + dx;
+    const calcY = dragOriginWinPos[1] + dy;
+    const newX = Number.isFinite(calcX) ? Math.round(calcX) : dragOriginWinPos[0];
+    const newY = Number.isFinite(calcY) ? Math.round(calcY) : dragOriginWinPos[1];
     mainWindow.setPosition(newX, newY);
 
     const now = Date.now();
@@ -337,8 +339,10 @@ function initApp() {
     if (dragPositions.length >= 2) {
       const prev = dragPositions[0];
       const dt = Math.max(0.01, (now - prev.time) / 1000);
-      vx = (newX - prev.pos[0]) / dt;
-      vy = (newY - prev.pos[1]) / dt;
+      const rawVx = (newX - prev.pos[0]) / dt;
+      const rawVy = (newY - prev.pos[1]) / dt;
+      if (Number.isFinite(rawVx)) vx = rawVx;
+      if (Number.isFinite(rawVy)) vy = rawVy;
     }
 
     mainWindow.webContents.send('character:drag', { isDragging: true, isAirborne: true, vx, vy });
@@ -351,9 +355,13 @@ function initApp() {
     const workArea = screen.getPrimaryDisplay().workArea;
     const winSize = mainWindow.getSize();
 
-    const floorY = workArea.y + workArea.height - winSize[1];
-    const minX = workArea.x;
-    const maxX = workArea.x + workArea.width - winSize[0];
+    const floorY = Math.round(workArea.y + workArea.height - winSize[1]);
+    const minY = Math.round(workArea.y);
+    const minX = Math.round(workArea.x);
+    const maxX = Math.round(workArea.x + workArea.width - winSize[0]);
+
+    const startX = Number.isFinite(currentPos[0]) ? currentPos[0] : minX;
+    const startY = Number.isFinite(currentPos[1]) ? currentPos[1] : floorY;
 
     // Compute throw release velocity from drag history
     let releaseVx = 0;
@@ -361,9 +369,13 @@ function initApp() {
     const now = Date.now();
     if (dragPositions.length >= 2) {
       const oldest = dragPositions[0];
-      const dt = Math.max(0.02, (now - oldest.time) / 1000);
-      releaseVx = (currentPos[0] - oldest.pos[0]) / dt;
-      releaseVy = (currentPos[1] - oldest.pos[1]) / dt;
+      const dt = (now - oldest.time) / 1000;
+      if (dt > 0.005) {
+        const calcVx = (startX - oldest.pos[0]) / dt;
+        const calcVy = (startY - oldest.pos[1]) / dt;
+        if (Number.isFinite(calcVx)) releaseVx = calcVx;
+        if (Number.isFinite(calcVy)) releaseVy = calcVy;
+      }
     }
     dragPositions = [];
     dragOriginWinPos = null;
@@ -372,20 +384,27 @@ function initApp() {
       physicsEngine = new PhysicsDropEngine();
     }
 
-    mainWindow.webContents.send('character:drag', { isDragging: false, isAirborne: currentPos[1] < floorY, vx: releaseVx, vy: releaseVy });
+    mainWindow.webContents.send('character:drag', {
+      isDragging: false,
+      isAirborne: startY < floorY,
+      vx: releaseVx,
+      vy: releaseVy
+    });
 
     // Launch gravity drop simulation with momentum and elastic bounce!
     physicsEngine.drop({
-      startX: currentPos[0],
-      startY: currentPos[1],
+      startX,
+      startY,
       vx: releaseVx,
       vy: releaseVy,
       floorY,
-      bounds: { minX, maxX },
+      bounds: { minX, maxX, minY },
       onStep: ({ x, y, vx, vy, isAirborne }) => {
         if (!mainWindow || mainWindow.isDestroyed()) return;
-        mainWindow.setPosition(Math.round(x), Math.round(y));
-        mainWindow.webContents.send('character:physics', { x, y, vx, vy, isAirborne });
+        const safeX = Number.isFinite(x) ? Math.round(x) : minX;
+        const safeY = Number.isFinite(y) ? Math.round(y) : floorY;
+        mainWindow.setPosition(safeX, safeY);
+        mainWindow.webContents.send('character:physics', { x: safeX, y: safeY, vx, vy, isAirborne });
       },
       onBounce: ({ impactVelocity, type, final }) => {
         if (!mainWindow || mainWindow.isDestroyed()) return;
@@ -393,8 +412,10 @@ function initApp() {
       },
       onRest: ({ x, y }) => {
         if (!mainWindow || mainWindow.isDestroyed()) return;
+        const safeX = Number.isFinite(x) ? Math.round(x) : minX;
+        const safeY = Number.isFinite(y) ? Math.round(y) : floorY;
         if (walker) {
-          walker.setPosition(x, y);
+          walker.setPosition(safeX, safeY);
           walker.resume('drag');
         }
       }
