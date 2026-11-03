@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-03 | feat(desktop) | wire sound effects to pet reactions and interactions | APP-5, APP-7, APP-8
 - 2026-11-03 | feat(audio) | add procedural sound effects for pets and emotions | APP-5, APP-7, APP-8
 - 2026-11-03 | feat(desktop) | add sound effects to settings schema | APP-9, APP-14
 - 2026-11-03 | docs | add pet models and open source asset documentation | APP-5, APP-9

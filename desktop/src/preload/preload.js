@@ -32,6 +32,11 @@ contextBridge.exposeInMainWorld('roomiApi', {
     ipcRenderer.on('character:pet', handler);
     return () => ipcRenderer.removeListener('character:pet', handler);
   },
+  onSettingsChange: (callback) => {
+    const handler = (_event, settings) => callback(settings);
+    ipcRenderer.on('settings:change', handler);
+    return () => ipcRenderer.removeListener('settings:change', handler);
+  },
 
   // Emitters from Renderer -> Main
   setHover: (isHovering) => ipcRenderer.send('hover:set', isHovering),

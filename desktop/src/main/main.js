@@ -256,6 +256,7 @@ function initApp() {
   // Send persisted pet selection to renderer on load
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('character:pet', currentSettings.selectedPet);
+    mainWindow.webContents.send('settings:change', currentSettings);
   });
 
   // Performance: pause walker and animations when hidden (T10.2)
@@ -366,9 +367,10 @@ function initApp() {
     }
     resetInactivity();
 
-    // Broadcast pet change if updated
+    // Broadcast pet change and settings if updated
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('character:pet', currentSettings.selectedPet);
+      mainWindow.webContents.send('settings:change', currentSettings);
     }
 
     // Re-evaluate current state with new thresholds

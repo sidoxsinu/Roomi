@@ -17,6 +17,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const panelSimBadge = document.getElementById('panel-sim-badge');
 
   const character = new Character(characterTarget);
+  const soundFx = typeof SoundFxEngine !== 'undefined' ? new SoundFxEngine() : null;
 
   let isHovering = false;
   let isDragging = false;
@@ -41,6 +42,14 @@ window.addEventListener('DOMContentLoaded', () => {
     if (speechHideTimer) clearTimeout(speechHideTimer);
     speechText.textContent = text;
     speechBubble.classList.remove('hidden');
+
+    if (soundFx) {
+      if (text.includes('?')) {
+        soundFx.playQuestion();
+      } else {
+        soundFx.playSpeechBubble();
+      }
+    }
 
     speechHideTimer = setTimeout(() => {
       speechBubble.classList.add('hidden');
@@ -151,8 +160,11 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!hasDragged) {
       // It was a click! (APP-7)
       character.jump();
-      const clickMsg = SPEECH_MESSAGES.click[Math.floor(Math.random() * SPEECH_MESSAGES.click.length)];
-      showSpeech(clickMsg, 2000);
+      if (soundFx) {
+        soundFx.playJump();
+        soundFx.playPetVocal(character.currentPetId || 'blob');
+      }
+      triggerStateSpeech('click');
       showPanel();
       hidePanelAfter(4000);
       if (window.roomiApi) {
@@ -165,13 +177,35 @@ window.addEventListener('DOMContentLoaded', () => {
     // Listen to live pet model changes (APP-9 extension)
     window.roomiApi.onPetChange((petId) => {
       character.setPet(petId);
+      if (soundFx) {
+        soundFx.updateSettings({ pet: petId });
+        soundFx.playPetVocal(petId);
+      }
       triggerStateSpeech('happy');
     });
 
-    // Load initial pet from persisted settings
+    // Listen to settings updates (volume, sound toggle, pet)
+    window.roomiApi.onSettingsChange((settings) => {
+      if (settings && soundFx) {
+        soundFx.updateSettings({
+          enabled: settings.soundEnabled,
+          volume: settings.soundVolume,
+          pet: settings.selectedPet
+        });
+      }
+    });
+
+    // Load initial pet and sound preferences from persisted settings
     window.roomiApi.getSettings().then((settings) => {
-      if (settings && settings.selectedPet) {
-        character.setPet(settings.selectedPet);
+      if (settings) {
+        if (settings.selectedPet) character.setPet(settings.selectedPet);
+        if (soundFx) {
+          soundFx.updateSettings({
+            enabled: settings.soundEnabled,
+            volume: settings.soundVolume,
+            pet: settings.selectedPet
+          });
+        }
       }
     }).catch(console.error);
 
@@ -201,8 +235,15 @@ window.addEventListener('DOMContentLoaded', () => {
         panelReasons.style.display = 'none';
       }
 
-      // Trigger friendly speech bubble on meaningful state change
+      // Trigger sound and friendly speech bubble on meaningful state change
       if (state !== previousState) {
+        if (soundFx) {
+          if (previousState === 'sleeping' && state !== 'sleeping') {
+            soundFx.playWake();
+          } else {
+            soundFx.playStateReaction(state);
+          }
+        }
         previousState = state;
         triggerStateSpeech(state);
       }
@@ -251,7 +292,8 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Expose character for testing and interaction
+  // Expose character and soundFx for testing and interaction
   window.character = character;
+  window.soundFx = soundFx;
   window.showSpeech = showSpeech;
 });
