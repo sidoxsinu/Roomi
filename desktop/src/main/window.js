@@ -27,10 +27,13 @@ function createCharacterWindow() {
   const keepOnTop = () => {
     if (!win.isDestroyed()) {
       win.setAlwaysOnTop(true, 'screen-saver');
+      win.moveTop();
     }
   };
+  const topmostTimer = setInterval(keepOnTop, 1000);
   win.on('show', keepOnTop);
   win.on('blur', keepOnTop);
+  win.on('closed', () => clearInterval(topmostTimer));
   win.once('ready-to-show', () => {
     keepOnTop();
     win.showInactive();

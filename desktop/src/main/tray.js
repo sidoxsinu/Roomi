@@ -15,14 +15,12 @@ function setupTray(mainWindow, options = {}) {
 
     const contextMenu = Menu.buildFromTemplate([
       {
-        label: isVisible ? 'Hide ROOMI' : 'Show ROOMI',
+        label: 'Show ROOMI',
         click: () => {
           if (!mainWindow || mainWindow.isDestroyed()) return;
-          if (mainWindow.isVisible()) {
-            mainWindow.hide();
-          } else {
-            mainWindow.show();
-          }
+          mainWindow.showInactive();
+          mainWindow.setAlwaysOnTop(true, 'screen-saver');
+          if (typeof mainWindow.moveTop === 'function') mainWindow.moveTop();
           updateMenu();
         }
       },
@@ -57,11 +55,9 @@ function setupTray(mainWindow, options = {}) {
 
   tray.on('click', () => {
     if (!mainWindow || mainWindow.isDestroyed()) return;
-    if (mainWindow.isVisible()) {
-      mainWindow.hide();
-    } else {
-      mainWindow.show();
-    }
+    mainWindow.showInactive();
+    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+    if (typeof mainWindow.moveTop === 'function') mainWindow.moveTop();
     updateMenu();
   });
 
