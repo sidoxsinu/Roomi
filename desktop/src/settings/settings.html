@@ -360,12 +360,34 @@
       </div>
     </div>
 
+    <!-- Sound Effects (APP-9 / Audio System) -->
+    <div class="section">
+      <div class="section-title" style="display: flex; align-items: center; justify-content: space-between;">
+        <span>Sound Effects & Audio</span>
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; text-transform: none;">
+          <input type="checkbox" id="soundEnabled" checked> Enable Audio
+        </label>
+      </div>
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="soundVolume">Master Volume</label>
+        <div class="range-wrap">
+          <input type="range" id="soundVolume" min="0" max="100" step="5" value="70">
+          <span class="range-val" id="soundVolumeVal">70 %</span>
+        </div>
+      </div>
+      <div style="margin-top: 10px; display: flex; gap: 8px;">
+        <button type="button" id="btnPreviewPet" class="btn-secondary" style="font-size: 11px; padding: 6px 10px;">🔊 Preview Pet Voice</button>
+        <button type="button" id="btnPreviewEmotion" class="btn-secondary" style="font-size: 11px; padding: 6px 10px;">✨ Preview Reaction Chime</button>
+      </div>
+    </div>
+
     <div class="actions">
       <span class="saved-msg" id="saved-msg">✓ Settings saved & applied</span>
       <button type="submit" class="btn-primary">Save Changes</button>
     </div>
   </form>
 
+  <script src="../renderer/audio/soundFx.js"></script>
   <script src="settings.js"></script>
 </body>
 </html>

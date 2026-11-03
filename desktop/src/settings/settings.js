@@ -13,6 +13,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   const sleepAfterInput = document.getElementById('sleepAfter');
   const savedMsg = document.getElementById('saved-msg');
 
+  // Sound Controls (APP-9 / Audio System)
+  const soundEnabledInput = document.getElementById('soundEnabled');
+  const soundVolumeInput = document.getElementById('soundVolume');
+  const soundVolumeVal = document.getElementById('soundVolumeVal');
+  const btnPreviewPet = document.getElementById('btnPreviewPet');
+  const btnPreviewEmotion = document.getElementById('btnPreviewEmotion');
+
+  const previewSoundEngine = typeof SoundFxEngine !== 'undefined' ? new SoundFxEngine() : null;
+
   // Simulation Controls (APP-12)
   const simToggle = document.getElementById('simToggle');
   const simControls = document.getElementById('simControls');
@@ -76,6 +85,48 @@ window.addEventListener('DOMContentLoaded', async () => {
     walkSpeedVal.textContent = `${walkSpeedInput.value} px/s`;
   });
 
+  // Sound listeners
+  soundVolumeInput.addEventListener('input', () => {
+    soundVolumeVal.textContent = `${soundVolumeInput.value} %`;
+    if (previewSoundEngine) {
+      previewSoundEngine.updateSettings({
+        enabled: soundEnabledInput.checked,
+        volume: parseInt(soundVolumeInput.value, 10)
+      });
+    }
+  });
+
+  soundEnabledInput.addEventListener('change', () => {
+    if (previewSoundEngine) {
+      previewSoundEngine.updateSettings({
+        enabled: soundEnabledInput.checked
+      });
+    }
+  });
+
+  btnPreviewPet.addEventListener('click', () => {
+    if (previewSoundEngine) {
+      const selectedPetRadio = document.querySelector('input[name="selectedPet"]:checked');
+      const pet = selectedPetRadio ? selectedPetRadio.value : 'blob';
+      previewSoundEngine.updateSettings({
+        enabled: soundEnabledInput.checked,
+        volume: parseInt(soundVolumeInput.value, 10),
+        pet
+      });
+      previewSoundEngine.playPetVocal(pet);
+    }
+  });
+
+  btnPreviewEmotion.addEventListener('click', () => {
+    if (previewSoundEngine) {
+      previewSoundEngine.updateSettings({
+        enabled: soundEnabledInput.checked,
+        volume: parseInt(soundVolumeInput.value, 10)
+      });
+      previewSoundEngine.playHappy();
+    }
+  });
+
   // Load current settings via IPC
   if (window.roomiApi) {
     try {
@@ -97,6 +148,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         walkSpeedInput.value = current.walkSpeedPxPerSec || 50;
         walkSpeedVal.textContent = `${walkSpeedInput.value} px/s`;
         sleepAfterInput.value = current.sleepAfterMinutes || 5;
+
+        if (current.soundEnabled !== undefined) {
+          soundEnabledInput.checked = Boolean(current.soundEnabled);
+        }
+        if (current.soundVolume !== undefined) {
+          soundVolumeInput.value = current.soundVolume;
+          soundVolumeVal.textContent = `${current.soundVolume} %`;
+        }
       }
     } catch (err) {
       console.error('Failed to load settings:', err);
@@ -112,6 +171,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const newSettings = {
       selectedPet,
+      soundEnabled: soundEnabledInput.checked,
+      soundVolume: parseInt(soundVolumeInput.value, 10),
       host: hostInput.value.trim(),
       port: parseInt(portInput.value, 10),
       pollIntervalMs: Math.max(1, parseInt(pollInput.value, 10)) * 1000,
