@@ -12,6 +12,7 @@ function createCharacterWindow() {
     alwaysOnTop: true,
     skipTaskbar: true,
     backgroundColor: '#00000000', // Ensures transparency without black background glitches on Windows
+    show: false,
     webPreferences: {
       preload: path.join(__dirname, '../preload/preload.js'),
       contextIsolation: true,
@@ -21,6 +22,19 @@ function createCharacterWindow() {
   });
 
   win.setAlwaysOnTop(true, 'screen-saver');
+  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+
+  const keepOnTop = () => {
+    if (!win.isDestroyed()) {
+      win.setAlwaysOnTop(true, 'screen-saver');
+    }
+  };
+  win.on('show', keepOnTop);
+  win.on('blur', keepOnTop);
+  win.once('ready-to-show', () => {
+    keepOnTop();
+    win.showInactive();
+  });
 
   if (process.platform === 'darwin') {
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
@@ -38,4 +52,3 @@ function createCharacterWindow() {
 }
 
 module.exports = { createCharacterWindow };
-
