@@ -8,6 +8,42 @@ let tray = null;
 let walker = null;
 let dragOriginWinPos = null;
 
+// Sleep Inactivity State Management (APP-8)
+let sleepTimeoutMs = 5 * 60 * 1000; // Default 5 minutes
+let sleepTimer = null;
+let isSleeping = false;
+let currentResolvedState = 'happy';
+
+function resetInactivity() {
+  if (sleepTimer) clearTimeout(sleepTimer);
+
+  if (isSleeping) {
+    isSleeping = false;
+    if (walker) walker.resume('sleeping');
+    emitCharacterState(currentResolvedState);
+  }
+
+  sleepTimer = setTimeout(() => {
+    // Sleep only applies when resolved state is happy per 06-CHARACTER-BEHAVIOUR.md
+    if (currentResolvedState === 'happy' && !isSleeping) {
+      isSleeping = true;
+      if (walker) walker.pause('sleeping');
+      emitCharacterState('sleeping');
+    }
+  }, sleepTimeoutMs);
+}
+
+function emitCharacterState(state, reasons = []) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('character:state', { state, reasons });
+  }
+}
+
+function setSleepTimeoutMinutes(minutes) {
+  sleepTimeoutMs = Math.max(1, minutes) * 60 * 1000;
+  resetInactivity();
+}
+
 function initApp() {
   mainWindow = createCharacterWindow();
 
@@ -18,8 +54,12 @@ function initApp() {
   walker = new Walker(mainWindow);
   walker.start();
 
+  // Initialize inactivity sleep timer
+  resetInactivity();
+
   // IPC listener for hover-based click-through (APP-10)
   ipcMain.on('hover:set', (_event, isHovering) => {
+    resetInactivity();
     if (mainWindow && !mainWindow.isDestroyed()) {
       if (isHovering) {
         mainWindow.setIgnoreMouseEvents(false);
@@ -31,12 +71,14 @@ function initApp() {
 
   // Manual Drag Interactions (APP-7)
   ipcMain.on('drag:start', () => {
+    resetInactivity();
     if (!mainWindow || mainWindow.isDestroyed()) return;
     dragOriginWinPos = mainWindow.getPosition();
     if (walker) walker.pause('drag');
   });
 
   ipcMain.on('drag:move', (_event, { dx, dy }) => {
+    resetInactivity();
     if (!mainWindow || mainWindow.isDestroyed() || !dragOriginWinPos) return;
     const newX = Math.round(dragOriginWinPos[0] + dx);
     const newY = Math.round(dragOriginWinPos[1] + dy);
@@ -44,6 +86,7 @@ function initApp() {
   });
 
   ipcMain.on('drag:end', () => {
+    resetInactivity();
     if (!mainWindow || mainWindow.isDestroyed()) return;
     const currentPos = mainWindow.getPosition();
     const workArea = screen.getPrimaryDisplay().workArea;
@@ -63,8 +106,9 @@ function initApp() {
     dragOriginWinPos = null;
   });
 
-  // Click Interaction: jump reaction and brief walker pause (APP-7)
+  // Click Interaction: jump reaction, wake up, and brief walker pause (APP-7, APP-8)
   ipcMain.on('interact:click', () => {
+    resetInactivity();
     if (walker) {
       walker.pause('click');
       setTimeout(() => {
@@ -74,6 +118,7 @@ function initApp() {
   });
 
   mainWindow.on('closed', () => {
+    if (sleepTimer) clearTimeout(sleepTimer);
     if (walker) walker.stop();
     mainWindow = null;
   });
@@ -95,4 +140,15 @@ app.on('window-all-closed', () => {
   }
 });
 
-module.exports = { getWalker: () => walker };
+module.exports = {
+  getWalker: () => walker,
+  setSleepTimeoutMinutes,
+  triggerSleepForTesting: () => {
+    if (currentResolvedState === 'happy') {
+      isSleeping = true;
+      if (walker) walker.pause('sleeping');
+      emitCharacterState('sleeping');
+    }
+  },
+  resetInactivity
+};
