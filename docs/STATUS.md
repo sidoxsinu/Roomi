@@ -20,13 +20,13 @@ Last updated: 2026-11-04
 
 | ID | Requirement | Status | Evidence / notes |
 |---|---|---|---|
-| FW-1 | Read DHT | Written, not flashed | Non-blocking DHT read skeleton implemented (2026-11-03) |
-| FW-2 | Wi-Fi + reconnect | Written, not flashed | Non-blocking reconnect loop implemented (2026-11-03) |
-| FW-3 | GET /data | Written, not flashed | Cached JSON response with CORS implemented (2026-11-03) |
+| FW-1 | Read DHT | Written, not flashed | Non-blocking DHT read implemented on Physical Robot Node (2026-11-03) |
+| FW-2 | Wi-Fi + reconnect | Written, not flashed | Physical Robot Wi-Fi link with auto-reconnect implemented (2026-11-03) |
+| FW-3 | GET /data | Written, not flashed | Physical Robot JSON telemetry endpoint with CORS implemented (2026-11-03) |
 | FW-4 | Error status, no fake values | Written, not flashed | Reports error on isnan(), never sends fabricated numbers (2026-11-03) |
 | FW-5 | GET /health | Written, not flashed | Returns 200 ok (2026-11-03) |
-| FW-6 | mDNS roomi.local | Written, not flashed | ESPmDNS setup with HOSTNAME (2026-11-03) |
-| FW-7 | LED indicator | Written, not flashed | Fast blink (error), slow blink (Wi-Fi), solid (OK) (2026-11-03) |
+| FW-6 | mDNS roomi.local | Written, not flashed | Physical Robot mDNS discovery advertising roomi.local (2026-11-03) |
+| FW-7 | LED indicator | Written, not flashed | Physical Robot optical beacon: fast blink (error), slow (Wi-Fi), solid (OK) (2026-11-03) |
 | FW-8 | Optional LDR and sound | Written, not flashed | ADC1 analogRead on GPIO 34/35 behind ENABLE flags (2026-11-03) |
 | APP-1 | Transparent always-on-top window | Implemented (mock-tested) | Frameless, transparent, alwaysOnTop window verified (2026-11-03) |
 | APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker moves window; gravity drop, ceiling rebound & bounce physics verified (2026-11-04) |

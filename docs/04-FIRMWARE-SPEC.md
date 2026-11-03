@@ -1,8 +1,18 @@
-# Firmware Specification
+# Physical Robot Firmware Specification
 
-Framework: Arduino core for ESP32. Libraries: `WiFi`, `WebServer`, `ESPmDNS` (bundled), `DHT sensor library` and `Adafruit Unified Sensor` (Adafruit). Use Arduino IDE or PlatformIO; if PlatformIO, add `platformio.ini` under `firmware/roomi_esp32/` and document it.
+Firmware running on Part 1 of ROOMI: **The Physical Robot Node** (ESP32 core).
 
-## Files
+Framework: Arduino core for ESP32. Libraries: `WiFi`, `WebServer`, `ESPmDNS` (bundled), `DHT sensor library` and `Adafruit Unified Sensor` (Adafruit). Can be built with Arduino IDE or PlatformIO.
+
+---
+
+## 1. Physical Robot Firmware Roles
+
+1. **Environmental Sampling**: Non-blocking scheduled sampling of ambient temperature, humidity, and optional light/sound sensors.
+2. **Optical Beacon State Machine**: Drives the physical robot's LED eye indicator on GPIO 2 to signal hardware health and network status.
+3. **Telemetry Server**: Serves cached JSON telemetry over HTTP for the Digital Robot Twin desktop client.
+
+## 2. Files
 
 - `roomi_esp32.ino` main sketch
 - `config.example.h` committed template

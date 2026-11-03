@@ -1,27 +1,52 @@
-# Architecture
+# Architecture & System Design
 
-## Data flow
+ROOMI is designed as a **Dual Robotic Companion System** consisting of two synchronized entities:
+1. **The Physical Robot Node**: Desk-mounted hardware unit powered by an ESP32, environmental DHT sensor, status beacon, and optional sensory channels (LDR/sound).
+2. **The Digital Robot Model (Digital Twin)**: Interactive desktop companion running on Electron, walking across the real screen, mirroring physical robot telemetry, expressions, and environmental reactions.
+
+---
+
+## 1. System Data Flow
 
 ```
-DHT sensor -> ESP32 (HTTP server) -> Wi-Fi -> Electron main process (poller + validator)
-   -> IPC -> Renderer (character + panel) -> user interaction -> IPC -> main (window control)
+┌─────────────────────────────────┐
+│     PART 1: PHYSICAL ROBOT      │
+│  [ESP32 Node + DHT Sensor + LED]│
+└────────────────┬────────────────┘
+                 │ Wi-Fi HTTP (JSON telemetry)
+                 ▼
+┌─────────────────────────────────┐
+│     PART 2: DIGITAL ROBOT TWIN  │
+│ [Electron Main: Poller/Physics] │
+│                │                │
+│                ▼ IPC            │
+│ [Renderer: Robot Model + Audio] │
+└─────────────────────────────────┘
 ```
 
-## Components
+Detailed pipeline:
+```
+DHT sensor -> ESP32 Physical Robot (HTTP Server) -> Local Wi-Fi -> Electron Main (Poller + Validator)
+   -> Reaction Engine -> IPC -> Digital Twin Renderer (Robotic Model + Audio + Confetti)
+   -> User Drag/Drop Interaction -> Physics Engine (Gravity + Bounce) -> Window Movement
+```
+
+## 2. Components
 
 | Component | Runs in | Responsibility |
 |---|---|---|
-| Firmware | ESP32 | Read sensor, serve JSON |
-| Sensor Client | Electron main | Poll, timeout, validate, emit events |
-| Reaction Engine | Electron main (pure module) | Readings + thresholds -> character state |
-| Walker | Electron main | Moves the window across the work area |
-| Window Manager | Electron main | Transparent window, always-on-top, click-through |
-| Character Renderer | Renderer | Draws and animates the character from state |
-| Panel | Renderer | Readings and status UI |
-| Settings | Main + settings window | Load/save config, edit thresholds |
-| Mock Server | Node (tools/) | Simulates ESP32 |
+| **Physical Robot Firmware** | ESP32 | Samples DHT sensor, manages physical LED beacon, serves JSON telemetry over HTTP |
+| **Sensor Client** | Electron Main | Polls physical robot, handles timeouts/disconnects, validates telemetry |
+| **Reaction Engine** | Electron Main (pure module) | Evaluates comfort thresholds, applies priority & hysteresis $\to$ robotic state |
+| **Physics Drop Engine** | Electron Main | Simulates real gravity ($g$), drag momentum, ceiling rebound, and elastic floor bounce |
+| **Walker Engine** | Electron Main | Autonomously moves the digital robot window across the real desktop work area |
+| **Window Manager** | Electron Main | Transparent, frameless, always-on-top window with hover click-through |
+| **Digital Twin Renderer** | Electron Renderer | Renders vector robotic model (`Robo-Node`), handles visor scanlines, squash & stretch |
+| **Web Audio Synthesizer** | Electron Renderer | Synthesizes robotic bleeps, environmental reaction chimes, and impact landing thuds |
+| **Settings Manager** | Electron Main + Settings UI | Configures robot host/IP, poll interval, comfort thresholds, audio volume, and pet models |
+| **Mock Sensor Server** | Node.js (`tools/`) | Simulates physical robot node for offline development and failure drills |
 
-Rule: the renderer has no Node access. All communication uses a preload script with `contextBridge` and a small typed IPC surface. `contextIsolation: true`, `nodeIntegration: false`.
+Rule: The renderer has no direct Node access. All communication uses a secure preload script with `contextBridge` (`contextIsolation: true`, `nodeIntegration: false`, `sandbox: true`).
 
 ## API contract (ESP32 and mock server)
 

@@ -1,22 +1,38 @@
-# Hardware Guide
+# Physical Robot Hardware Guide
 
-Status: wiring is a proposal. Verify against the exact modules before powering. The exact ESP32 board and DHT model are not yet confirmed.
+Status: Hardware reference for Part 1 of ROOMI (The Physical Robot Node).
 
-## Bill of materials
+ROOMI's physical component is an IoT desktop robot that sits on the user's workstation. It houses the ESP32 controller, sensory organs (DHT temperature & humidity sensor, optional LDR light and sound modules), and an optical status beacon LED.
 
-| Item | Use | Status |
+---
+
+## 1. Physical Robot Architecture & Enclosure
+
+- **Form Factor**: Compact desk robot chassis / enclosure.
+- **Sensor Porting & Ventilation**: The DHT sensor is positioned near external ventilation grills or atop the robot chassis to isolate ambient airflow from internal microcontroller heat dissipation.
+- **Optical Status Beacon (Robot Eye)**: An LED indicator on GPIO 2 acts as the physical robot's visual beacon:
+  - *Solid ON*: Robot online and healthy, telemetry broadcasting normally.
+  - *Slow Blink (1 Hz)*: Robot attempting Wi-Fi network connection.
+  - *Fast Blink (5 Hz)*: Sensor read error or hardware fault alert.
+
+---
+
+## 2. Bill of Materials (Physical Robot Node)
+
+| Item | Use in Physical Robot | Status |
 |---|---|---|
-| ESP32 dev board | Controller + Wi-Fi | Have |
-| DHT11 or DHT22 | Temperature + humidity | Have (model unconfirmed) |
-| Breadboard, jumper wires | Assembly | Have |
-| USB cable | Power + programming | Have |
-| LED + 220-330 ohm resistor | Status indicator | Optional |
-| 10k ohm resistor | DHT pull-up (bare sensor), LDR divider | If needed |
-| LDR | Light (parameter 3) | May borrow |
-| Analog sound sensor module | Sound level (parameter 4) | May borrow |
-| OLED, buzzer, relay, fan | Future | Not for MVP |
+| ESP32 Dev Board | Main robot compute core + Wi-Fi radio | Have |
+| DHT11 or DHT22 | Temperature & humidity environmental organ | Have (model switch in firmware) |
+| Physical Robot Enclosure / Breadboard | Chassis assembly | Have |
+| USB-C / Micro-USB cable | Power (5V) & programming link | Have |
+| Status Beacon LED + Resistor | Physical robot optical eye / status beacon | Have (GPIO 2 / onboard) |
+| 10k ohm Resistor | DHT pull-up & LDR voltage divider | If needed |
+| LDR Light Sensor | Parameter 3 (Ambient lighting detection) | Optional / ADC1 GPIO 34 |
+| Analog Sound Sensor Module | Parameter 4 (Acoustic room disturbance) | Optional / ADC1 GPIO 35 |
 
-## Pin map
+---
+
+## 3. Pin Map & Electrical Wiring
 
 | Function | ESP32 pin | Notes |
 |---|---|---|
