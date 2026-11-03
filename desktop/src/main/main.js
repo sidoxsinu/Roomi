@@ -1,15 +1,21 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { createCharacterWindow } = require('./window');
 const { setupTray } = require('./tray');
+const { Walker } = require('./walker');
 
 let mainWindow = null;
 let tray = null;
+let walker = null;
 
 function initApp() {
   mainWindow = createCharacterWindow();
 
   // Setup system tray menu (APP-11)
   tray = setupTray(mainWindow);
+
+  // Setup Walker moving the window (APP-2)
+  walker = new Walker(mainWindow);
+  walker.start();
 
   // IPC listener for hover-based click-through (APP-10)
   ipcMain.on('hover:set', (_event, isHovering) => {
@@ -23,6 +29,7 @@ function initApp() {
   });
 
   mainWindow.on('closed', () => {
+    if (walker) walker.stop();
     mainWindow = null;
   });
 }
@@ -42,3 +49,5 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+module.exports = { getWalker: () => walker };
