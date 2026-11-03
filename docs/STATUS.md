@@ -52,7 +52,7 @@ Last updated: 2026-11-03
 | M6 Sensor integration | Implemented (mock-tested) | Sensor client, reaction engine, state wiring, and info panel verified (2026-11-03) |
 | M7 Remaining states | Implemented (mock-tested) | All character states (hot, cold, humid, dry, disconnected) & speech bubbles verified (2026-11-03) |
 | M8 Settings and simulation | Implemented (mock-tested) | Settings store, settings window, and simulation mode verified (2026-11-03) |
-| M9 Optional sensors | Planned |
+| M9 Optional sensors | Implemented (mock-tested) | Firmware ADC read logic written, desktop relative value display verified (2026-11-03) |
 | M10 Hardening and MVP | Planned |
 
 ## Measured results

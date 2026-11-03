@@ -184,8 +184,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
       if (data.light_raw !== null || data.sound_raw !== null) {
         panelExtra.style.display = 'flex';
-        valLight.textContent = data.light_raw !== null ? `Light: ${data.light_raw}` : 'Light: --';
-        valSound.textContent = data.sound_raw !== null ? `Sound: ${data.sound_raw}` : 'Sound: --';
+        valLight.textContent = data.light_raw !== null ? `Light: ${data.light_raw} (raw)` : 'Light: --';
+        valSound.textContent = data.sound_raw !== null ? `Sound: ${data.sound_raw} (raw)` : 'Sound: --';
       } else {
         panelExtra.style.display = 'none';
       }
