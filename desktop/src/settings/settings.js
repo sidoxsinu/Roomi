@@ -13,6 +13,65 @@ window.addEventListener('DOMContentLoaded', async () => {
   const sleepAfterInput = document.getElementById('sleepAfter');
   const savedMsg = document.getElementById('saved-msg');
 
+  // Simulation Controls (APP-12)
+  const simToggle = document.getElementById('simToggle');
+  const simControls = document.getElementById('simControls');
+  const simTemp = document.getElementById('simTemp');
+  const simTempVal = document.getElementById('simTempVal');
+  const simHumidity = document.getElementById('simHumidity');
+  const simHumidityVal = document.getElementById('simHumidityVal');
+  const simErrorBtn = document.getElementById('simErrorBtn');
+  const simRecoverBtn = document.getElementById('simRecoverBtn');
+
+  let isSimError = false;
+
+  function pushSimulationData() {
+    if (!simToggle.checked) return;
+    if (window.roomiApi) {
+      window.roomiApi.setSimulation({
+        temperature: parseFloat(simTemp.value),
+        humidity: parseFloat(simHumidity.value),
+        sensor_status: isSimError ? 'error' : 'online'
+      });
+    }
+  }
+
+  simToggle.addEventListener('change', () => {
+    if (simToggle.checked) {
+      simControls.style.display = 'block';
+      pushSimulationData();
+    } else {
+      simControls.style.display = 'none';
+      if (window.roomiApi) {
+        window.roomiApi.setSimulation({ enabled: false });
+      }
+    }
+  });
+
+  simTemp.addEventListener('input', () => {
+    simTempVal.textContent = `${parseFloat(simTemp.value).toFixed(1)} °C`;
+    pushSimulationData();
+  });
+
+  simHumidity.addEventListener('input', () => {
+    simHumidityVal.textContent = `${Math.round(simHumidity.value)} %`;
+    pushSimulationData();
+  });
+
+  simErrorBtn.addEventListener('click', () => {
+    isSimError = true;
+    simErrorBtn.style.display = 'none';
+    simRecoverBtn.style.display = 'inline-block';
+    pushSimulationData();
+  });
+
+  simRecoverBtn.addEventListener('click', () => {
+    isSimError = false;
+    simRecoverBtn.style.display = 'none';
+    simErrorBtn.style.display = 'inline-block';
+    pushSimulationData();
+  });
+
   walkSpeedInput.addEventListener('input', () => {
     walkSpeedVal.textContent = `${walkSpeedInput.value} px/s`;
   });

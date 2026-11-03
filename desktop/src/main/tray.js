@@ -34,6 +34,14 @@ function setupTray(mainWindow, options = {}) {
           }
         }
       },
+      {
+        label: options.isSimulation ? 'Simulation Mode: ON' : 'Simulation Mode: OFF',
+        click: () => {
+          if (options.onToggleSimulation) {
+            options.onToggleSimulation();
+          }
+        }
+      },
       { type: 'separator' },
       {
         label: 'Quit ROOMI',

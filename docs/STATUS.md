@@ -34,7 +34,7 @@ Last updated: 2026-11-03
 | APP-9 | Settings window | Implemented (mock-tested) | Settings window with live IPC and disclaimer verified (2026-11-03) |
 | APP-10 | Click-through | Implemented (mock-tested) | Forwarded mousemove hover toggling implemented (2026-11-03) |
 | APP-11 | Tray / menu-bar | Implemented (mock-tested) | Menu bar / system tray with Show/Hide and Quit verified (2026-11-03) |
-| APP-12 | Simulation mode | Planned | |
+| APP-12 | Simulation mode | Implemented (mock-tested) | Simulation mode with sliders and SIMULATION badge verified (2026-11-03) |
 | APP-13 | Mouse-follow | Planned | |
 | APP-14 | Persistent settings | Implemented (mock-tested) | Settings storage and validation module verified (2026-11-03) |
 | TOOL-1 | Mock sensor server | Implemented (mock-tested) | /data, /health, /control, and failure mode verified (2026-11-03) |
@@ -51,7 +51,7 @@ Last updated: 2026-11-03
 | M5 Character and walking | Implemented (mock-tested) | Character SVG, walker, click-through, drag, jump, and sleep verified (2026-11-03) |
 | M6 Sensor integration | Implemented (mock-tested) | Sensor client, reaction engine, state wiring, and info panel verified (2026-11-03) |
 | M7 Remaining states | Implemented (mock-tested) | All character states (hot, cold, humid, dry, disconnected) & speech bubbles verified (2026-11-03) |
-| M8 Settings and simulation | Planned |
+| M8 Settings and simulation | Implemented (mock-tested) | Settings store, settings window, and simulation mode verified (2026-11-03) |
 | M9 Optional sensors | Planned |
 | M10 Hardening and MVP | Planned |
 

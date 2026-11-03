@@ -230,7 +230,21 @@ function initApp() {
 
   // Setup system tray menu (APP-11)
   tray = setupTray(mainWindow, {
-    onOpenSettings: openSettingsWindow
+    onOpenSettings: openSettingsWindow,
+    isSimulation: isSimulationMode,
+    onToggleSimulation: () => {
+      isSimulationMode = !isSimulationMode;
+      if (isSimulationMode) {
+        applySimulationReading();
+      } else if (sensorClient) {
+        sensorClient.poll();
+      }
+      if (tray) tray.destroy();
+      tray = setupTray(mainWindow, {
+        onOpenSettings: openSettingsWindow,
+        isSimulation: isSimulationMode
+      });
+    }
   });
 
   // Setup Walker moving the window (APP-2)
@@ -345,6 +359,14 @@ function initApp() {
 
   // Simulation IPC handler (APP-12)
   ipcMain.on('sim:set', (_event, data) => {
+    if (data.enabled === false) {
+      isSimulationMode = false;
+      if (sensorClient) {
+        sensorClient.poll();
+      }
+      return;
+    }
+
     isSimulationMode = true;
     simulationData = { ...simulationData, ...data };
     applySimulationReading();
