@@ -48,8 +48,26 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   function triggerStateSpeech(state) {
-    const list = SPEECH_MESSAGES[state] || SPEECH_MESSAGES.happy;
-    const msg = list[Math.floor(Math.random() * list.length)];
+    const petId = character.currentPetId || 'blob';
+    let msg = '';
+
+    if (state === 'click') {
+      if (petId === 'cat') {
+        const catMsgs = ['Purrrrr! ✨', 'Meow! 🐾', 'Head bumps! 🐱'];
+        msg = catMsgs[Math.floor(Math.random() * catMsgs.length)];
+      } else if (petId === 'penguin') {
+        const penguMsgs = ['Noot noot! 🐧', 'Waddle waddle! ❄️', 'Flipper wave! ✨'];
+        msg = penguMsgs[Math.floor(Math.random() * penguMsgs.length)];
+      } else if (petId === 'robot') {
+        const botMsgs = ['Beep boop! 🤖', 'Diagnostics: Optimal! ⚡', 'Ping received! 📡'];
+        msg = botMsgs[Math.floor(Math.random() * botMsgs.length)];
+      } else {
+        msg = SPEECH_MESSAGES.click[Math.floor(Math.random() * SPEECH_MESSAGES.click.length)];
+      }
+    } else {
+      const list = SPEECH_MESSAGES[state] || SPEECH_MESSAGES.happy;
+      msg = list[Math.floor(Math.random() * list.length)];
+    }
     showSpeech(msg);
   }
 
@@ -144,6 +162,19 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   if (window.roomiApi) {
+    // Listen to live pet model changes (APP-9 extension)
+    window.roomiApi.onPetChange((petId) => {
+      character.setPet(petId);
+      triggerStateSpeech('happy');
+    });
+
+    // Load initial pet from persisted settings
+    window.roomiApi.getSettings().then((settings) => {
+      if (settings && settings.selectedPet) {
+        character.setPet(settings.selectedPet);
+      }
+    }).catch(console.error);
+
     // Listen to walker direction updates
     window.roomiApi.onWalkerDirection(({ dir, walking }) => {
       character.setDirection(dir, walking);

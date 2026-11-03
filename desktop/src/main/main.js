@@ -253,6 +253,11 @@ function initApp() {
   });
   walker.start();
 
+  // Send persisted pet selection to renderer on load
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('character:pet', currentSettings.selectedPet);
+  });
+
   // Performance: pause walker and animations when hidden (T10.2)
   mainWindow.on('hide', () => {
     if (walker) walker.pause('hidden');
@@ -360,6 +365,11 @@ function initApp() {
       sensorClient.setPollInterval(currentSettings.pollIntervalMs);
     }
     resetInactivity();
+
+    // Broadcast pet change if updated
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('character:pet', currentSettings.selectedPet);
+    }
 
     // Re-evaluate current state with new thresholds
     if (lastReading) {
