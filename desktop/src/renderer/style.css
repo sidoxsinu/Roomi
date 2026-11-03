@@ -149,8 +149,77 @@ html, body {
 .paused-anim *,
 .paused-anim #character,
 .paused-anim .foot,
-.paused-anim .zzz-text {
+.paused-anim .zzz-text,
+.paused-anim .cat-tail,
+.paused-anim .cat-ear,
+.paused-anim .flipper,
+.paused-anim .antenna-bulb,
+.paused-anim .core-pulse {
   animation-play-state: paused !important;
+}
+
+/* Pet Specific Animations */
+/* 1. Mochi Cat Tail & Ear Twitch */
+.cat-tail {
+  transform-origin: 125px 125px;
+  animation: cat-tail-sway 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes cat-tail-sway {
+  0% { transform: rotate(-8deg); }
+  100% { transform: rotate(14deg); }
+}
+
+.cat-ear.ear-left {
+  transform-origin: 50px 50px;
+  animation: ear-twitch 5s ease-in-out infinite;
+}
+
+@keyframes ear-twitch {
+  0%, 92%, 100% { transform: rotate(0deg); }
+  94% { transform: rotate(-6deg); }
+  96% { transform: rotate(4deg); }
+}
+
+/* 2. Pengu Flippers */
+#pet-container.walking .flipper-left {
+  animation: flipper-flap-l 0.45s ease-in-out infinite alternate;
+  transform-origin: 30px 85px;
+}
+
+#pet-container.walking .flipper-right {
+  animation: flipper-flap-r 0.45s ease-in-out infinite alternate;
+  transform-origin: 130px 85px;
+}
+
+@keyframes flipper-flap-l {
+  0% { transform: rotate(10deg); }
+  100% { transform: rotate(35deg); }
+}
+
+@keyframes flipper-flap-r {
+  0% { transform: rotate(-35deg); }
+  100% { transform: rotate(-10deg); }
+}
+
+/* 3. Robo-Node Antenna & Core Glow */
+.antenna-bulb {
+  animation: antenna-glow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes antenna-glow {
+  0% { opacity: 0.65; }
+  100% { opacity: 1; filter: drop-shadow(0 0 4px #2ecc71); }
+}
+
+.core-pulse {
+  animation: core-beat 2.4s ease-in-out infinite;
+  transform-origin: 80px 112px;
+}
+
+@keyframes core-beat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.22); }
 }
 
 /* Character Container */

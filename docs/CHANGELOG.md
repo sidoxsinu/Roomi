@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-03 | feat(character) | add animated cat, penguin, and robot pets | APP-5
 - 2026-11-03 | feat(desktop) | add pet selection to settings schema | APP-9, APP-14
 - 2026-11-03 | chore | tag mvp release v0.1.0-mvp | T10.5
 - 2026-11-03 | docs | record mvp acceptance results | T10.4
