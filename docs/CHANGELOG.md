@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-03 | fix(desktop) | emit disconnected status on startup when sensor unreachable | APP-4
 - 2026-11-03 | feat(desktop) | display optional light and sound values | APP-6, FW-8
 - 2026-11-03 | feat(firmware) | add optional ldr and sound channels | FW-8
 - 2026-11-03 | feat(desktop) | add simulation mode | APP-12

@@ -79,6 +79,7 @@ class SensorClient extends EventEmitter {
     this.consecutiveFailures = 0;
     this.lastValidTime = 0;
     this.isConnected = false;
+    this.hasEmittedInitialStatus = false;
     this.lastReading = null;
     this.isPolling = false;
   }
@@ -144,6 +145,7 @@ class SensorClient extends EventEmitter {
       this.consecutiveFailures = 0;
       this.lastValidTime = Date.now();
       this.lastReading = validation.sanitized;
+      this.hasEmittedInitialStatus = true;
 
       if (!this.isConnected) {
         this.isConnected = true;
@@ -162,9 +164,13 @@ class SensorClient extends EventEmitter {
 
   handleFailure(reason) {
     this.consecutiveFailures += 1;
-    if (this.isConnected && this.consecutiveFailures >= this.maxFailures) {
+    if (this.consecutiveFailures >= this.maxFailures) {
+      const wasConnected = this.isConnected;
       this.isConnected = false;
-      this.emit('sensor:status', { connected: false, reason: `Disconnected: ${reason}` });
+      if (wasConnected || !this.hasEmittedInitialStatus) {
+        this.hasEmittedInitialStatus = true;
+        this.emit('sensor:status', { connected: false, reason: `Disconnected: ${reason}` });
+      }
     }
   }
 
