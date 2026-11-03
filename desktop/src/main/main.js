@@ -94,7 +94,9 @@ function handleSensorReading(reading) {
 
   // Adjust walker speed based on character state (06-SPEC)
   if (walker) {
-    if (currentResolvedState === 'hot') {
+    if (currentResolvedState === 'disconnected') {
+      walker.speedPxPerSec = 15; // Slow confused wander
+    } else if (currentResolvedState === 'hot') {
       walker.speedPxPerSec = 32; // Slower walking when hot
     } else if (currentResolvedState === 'cold') {
       walker.speedPxPerSec = 36; // Shivering short steps

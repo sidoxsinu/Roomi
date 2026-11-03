@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-03 | feat(character) | add disconnected state | APP-4, APP-5
 - 2026-11-03 | feat(character) | add humid and dry states | APP-5
 - 2026-11-03 | feat(character) | add hot and cold states | APP-5
 - 2026-11-03 | feat(desktop) | add readings panel | APP-6
