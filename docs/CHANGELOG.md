@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-04 | feat(firmware) | integrate 4-servo quadruped walking locomotion on freertos core 1 | FW-9, HW-1
 - 2026-11-04 | feat(desktop) | set robot digital twin as default companion and update ui framing | APP-5, APP-9, APP-14
 - 2026-11-04 | docs | update specifications and dev guides to robot-focused digital twin | APP-1, APP-5, APP-8
 - 2026-11-04 | docs(arch) | document physical robot node and digital twin architecture | ARCH, HW-1, FW-1

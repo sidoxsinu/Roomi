@@ -1,41 +1,51 @@
 # ROOMI Product Requirements Document (PRD)
 
-Version: 1.0 | Status: Approved for development start
+Version: 1.2 | Status: Approved (Dual Robotic Companion Architecture with 4-Servo Quadruped Locomotion)
 
 ## 1. Summary
 
-ROOMI is a desktop companion. An ESP32 with a DHT temperature/humidity sensor sends readings over Wi-Fi to an Electron app. The app shows an animated character that walks on top of the user's actual desktop and changes expression and behaviour with the room's conditions.
+ROOMI is an IoT robotic companion built around an ESP32 microcontroller, quadruped walking servos, and a DHT temperature/humidity sensor. It consists of two seamlessly synchronized parts:
+1. **The Physical Robot Node**: A desk-mounted physical robot containing the ESP32, 4 walking servos (GPIO 18, 21, 19, 22), environmental DHT sensor, status beacon/LED, and optional sensory channels (LDR light, sound).
+2. **The Digital Robot Model (Digital Twin)**: An interactive Electron desktop companion that walks across the user's actual screen, mirroring the physical robot's environmental state, expressions, and telemetry in real time.
+
+Both the physical robot and the digital model respond synchronously to the room's temperature and humidity.
 
 ## 2. Problem
 
-Environmental readings are shown as raw numbers on dashboards that people rarely check. ROOMI makes the conditions of a room visible and engaging through a character, so changes are noticed without reading a dashboard.
+Environmental readings are traditionally shown as raw numbers on distant wall meters or web dashboards that people rarely check. ROOMI bridges the physical and digital worlds: a physical robot on your desk paired with a digital robot twin on your screen turns invisible indoor air conditions into intuitive, engaging robotic expressions and physical presence.
 
 ## 3. Aim
 
-Design and develop an IoT-enabled desktop companion that monitors real-world environmental conditions using an ESP32 and connected sensors, and represents the data through an animated virtual character on the user's desktop.
+Design and develop a dual-component IoT robotic companion that monitors real-world environmental conditions using an ESP32-based physical robot with quadruped walking locomotion, and represents the live conditions through a synchronized digital robot twin on the user's computer desktop.
 
 ## 4. Users
 
 | User | Need |
 |---|---|
-| Student at a PC | Notice a hot or humid room without checking a dashboard |
-| Teacher / lab in-charge | Friendly ambient indicator of room conditions |
-| Project evaluators | Clear hardware-software integration they can see working |
+| Student at a PC | Immediate ambient awareness of hot, cold, or humid room conditions from their desktop robot |
+| Teacher / lab in-charge | Visible physical and digital robotic indicator of classroom or lab environmental comfort |
+| Project evaluators | Clear hardware-software integration featuring a physical IoT robot communicating with a desktop digital twin |
 
 ## 5. Scope
 
 ### In scope for MVP (v1)
 
-- ESP32 reads DHT temperature and humidity.
-- ESP32 serves latest readings as JSON over HTTP on the local Wi-Fi.
-- Electron app polls the ESP32 and validates data.
-- Transparent, frameless, always-on-top character window that walks across the real screen.
-- Character states driven by configurable thresholds.
-- Click, drag, sleep, jump interactions.
-- Sensor connection status and a small readings panel.
-- Settings: ESP32 address, poll interval, thresholds.
-- Mock sensor server for development without hardware.
-- Optional LDR (light) and sound sensor fields to reach four measured parameters for the EDI report.
+- **Physical Robot Node**:
+  - ESP32 reads DHT temperature and humidity.
+  - ESP32 serves latest readings as JSON over HTTP on the local Wi-Fi.
+  - 4-servo quadruped walking locomotion executed on a dedicated FreeRTOS core (Core 1).
+  - Physical LED/beacon state machine indicating robot power, Wi-Fi link, and sensor status.
+  - Optional physical LDR (light) and sound sensor channels to provide up to 4 environmental telemetry dimensions.
+- **Digital Robot Twin**:
+  - Electron app polls the physical robot node and validates incoming telemetry.
+  - Transparent, frameless, always-on-top digital robot window that walks across the real screen.
+  - Digital robot states, expressions, and audio cues driven by configurable comfort thresholds.
+  - Click, drag, gravity drop, and sleeping interactions with physical landing bounce.
+  - Sensor connection status and readings panel displaying physical robot telemetry.
+  - Settings: Physical robot address (IP/mDNS), poll interval, comfort thresholds, audio volume.
+- **Development & Verification**:
+  - Mock sensor server simulating the physical robot node for rapid desktop development.
+  - Hardware simulation mode for offline interactive evaluation.
 
 ### Out of scope for MVP
 
@@ -57,6 +67,7 @@ IDs are used in commits and STATUS.md.
 | FW-6 | Advertise `roomi.local` via mDNS | Should |
 | FW-7 | LED indicator for Wi-Fi/sensor state | Could |
 | FW-8 | Optional LDR and sound readings as raw ADC values, fields null when absent | Could |
+| FW-9 | 4-servo quadruped walking gait running concurrently on FreeRTOS Core 1 | Must |
 
 ### Desktop app (APP)
 

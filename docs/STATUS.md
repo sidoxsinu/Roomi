@@ -23,6 +23,7 @@ Last updated: 2026-11-03
 | FW-6 | mDNS roomi.local | Written, not flashed | ESPmDNS setup with HOSTNAME (2026-11-03) |
 | FW-7 | LED indicator | Written, not flashed | Fast blink (error), slow blink (Wi-Fi), solid (OK) (2026-11-03) |
 | FW-8 | Optional LDR and sound | Written, not flashed | ADC1 analogRead on GPIO 34/35 behind ENABLE flags (2026-11-03) |
+| FW-9 | 4-servo quadruped locomotion | Written, not flashed | Push-and-snap gait on GPIO 18, 21, 19, 22 pinned to FreeRTOS Core 1 (2026-11-04) |
 | APP-1 | Transparent always-on-top window | Implemented (mock-tested) | Frameless, transparent, alwaysOnTop Digital Robot Twin window verified (2026-11-03) |
 | APP-2 | Walks across real desktop | Implemented (mock-tested) | Digital Robot Twin walks across desktop; gravity drop, ceiling rebound & bounce physics verified (2026-11-04) |
 | APP-3 | Poll ESP32 | Implemented (mock-tested) | Polling Physical Robot Node with AbortController timeout verified (2026-11-03) |
