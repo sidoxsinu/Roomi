@@ -29,7 +29,7 @@ Last updated: 2026-11-03
 | APP-4 | Validate and detect disconnect | Implemented (mock-tested) | Strict shape/range validation and disconnect detection verified (2026-11-03) |
 | APP-5 | Threshold-driven states | Implemented (mock-tested) | Priority/hysteresis reaction engine; 4 companion models & state audio synthesized (2026-11-03) |
 | APP-6 | Readings panel | Implemented (mock-tested) | Readings panel bubble with live temp, humidity, status verified (2026-11-03) |
-| APP-7 | Click and drag | Implemented (mock-tested) | Jump reaction, pet vocalizations, drag repositioning with tilt, squash-stretch landing impact, and thud sound (2026-11-03) |
+| APP-7 | Click and drag | Implemented (mock-tested) | Jump reaction, pet vocalizations, drag tilt, gravity drop, squash-stretch landing impact, and thud sound (2026-11-03) |
 | APP-8 | Idle and sleep | Implemented (mock-tested) | Idle/sleep animations with lullaby/wake procedural audio wired (2026-11-03) |
 | APP-9 | Settings window | Implemented (mock-tested) | Settings window with live IPC, companion pet selector, sound controls/previews, and disclaimer verified (2026-11-03) |
 | APP-10 | Click-through | Implemented (mock-tested) | Forwarded mousemove hover toggling implemented (2026-11-03) |

@@ -18,6 +18,7 @@ Tagline: Your room, your digital companion.
 | 10-DEV-SETUP.md | Created by the agent in M1 and finalised in M10: how to run everything |
 | 11-PETS-AND-ASSETS.md | Open-source multi-pet system: models, animations, states, and licensing |
 | 12-AUDIO-SPEC.md | Procedural Web Audio engine: pet voices, emotion chimes, dialogue sounds, volume controls |
+| 13-PHYSICS-AND-LIBRARIES.md | Open-source libraries: gravity engine, drag-and-drop physics, squash-stretch landing, confetti |
 | STATUS.md | Live Implemented / In progress / Planned tracker (agent updates every task) |
 | CHANGELOG.md | Human-readable log of changes (agent updates every task) |
 

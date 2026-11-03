@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-03 | docs | document open-source animation, physics, and audio libraries | APP-1, APP-5, APP-7
 - 2026-11-03 | feat(character) | add airborne drag tilt, landing squash, and impact sounds | APP-5, APP-7
 - 2026-11-03 | feat(desktop) | integrate real gravity drop and throw momentum | APP-2, APP-7
 - 2026-11-03 | feat(desktop) | add gravity and bounce physics engine for drag and drop | APP-2, APP-7
