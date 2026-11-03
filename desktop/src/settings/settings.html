@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROOMI Settings</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --border: #e2e8f0;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 18px;
+      font-size: 13px;
+    }
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+
+    .section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 10px;
+      color: #334155;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    label {
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    input[type="text"], input[type="number"], select {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    .range-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+    }
+
+    .range-val {
+      font-weight: 600;
+      min-width: 45px;
+      text-align: right;
+    }
+
+    .notice {
+      background-color: #eff6ff;
+      border-left: 3px solid var(--primary);
+      padding: 8px 10px;
+      font-size: 11px;
+      color: #1e40af;
+      border-radius: 4px;
+      margin-top: 6px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .saved-msg {
+      color: #16a34a;
+      font-weight: 600;
+      font-size: 12px;
+      align-self: center;
+      margin-right: auto;
+      display: none;
+    }
+
+    /* Companion Character Selector (APP-9 / Multi-Pet) */
+    .pet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .pet-card {
+      display: block;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .pet-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .pet-card-content {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      background: #ffffff;
+    }
+
+    .pet-card:hover .pet-card-content {
+      border-color: #cbd5e1;
+    }
+
+    .pet-card input[type="radio"]:checked + .pet-card-content {
+      border-color: var(--primary);
+      background: #eff6ff;
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .pet-avatar {
+      font-size: 26px;
+      line-height: 1;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pet-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .pet-name {
+      font-weight: 600;
+      font-size: 12px;
+      color: #0f172a;
+    }
+
+    .pet-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.25;
+    }
+  </style>
+</head>
+<body>
+  <h2>ROOMI Settings</h2>
+
+  <form id="settings-form">
+    <!-- Network & Hardware -->
+    <div class="section">
+      <div class="section-title">ESP32 Sensor Connection</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="host">Host / IP</label>
+          <input type="text" id="host" required placeholder="roomi.local or IP">
+        </div>
+        <div class="form-group">
+          <label for="port">Port</label>
+          <input type="number" id="port" min="1" max="65535" value="80">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="pollInterval">Poll Interval (seconds)</label>
+        <input type="number" id="pollInterval" min="1" max="60" step="1" value="3">
+      </div>
+    </div>
+
+    <!-- Simulation Mode (APP-12) -->
+    <div class="section" style="border-left: 3px solid #f59e0b;">
+      <div class="section-title" style="display: flex; align-items: center; justify-content: space-between;">
+        <span>Hardware Simulation (Demo Mode)</span>
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; text-transform: none;">
+          <input type="checkbox" id="simToggle"> Enable Simulation
+        </label>
+      </div>
+      <div id="simControls" style="display: none; margin-top: 10px;">
+        <div class="form-group">
+          <label for="simTemp">Simulated Temperature</label>
+          <div class="range-wrap">
+            <input type="range" id="simTemp" min="-10" max="50" step="0.5" value="24.5">
+            <span class="range-val" id="simTempVal">24.5 °C</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="simHumidity">Simulated Humidity</label>
+          <div class="range-wrap">
+            <input type="range" id="simHumidity" min="0" max="100" step="1" value="55">
+            <span class="range-val" id="simHumidityVal">55 %</span>
+          </div>
+        </div>
+        <div style="margin-top: 8px; display: flex; gap: 8px;">
+          <button type="button" id="simErrorBtn" class="btn-secondary" style="font-size: 11px; padding: 6px 10px;">Simulate Sensor Disconnect / Error</button>
+          <button type="button" id="simRecoverBtn" class="btn-secondary" style="font-size: 11px; padding: 6px 10px; display: none;">Restore Sensor Signal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comfort Thresholds -->
+    <div class="section">
+      <div class="section-title">Comfort Thresholds</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="tempHigh">High Temp Alert (°C)</label>
+          <input type="number" id="tempHigh" step="0.5" value="30.0">
+        </div>
+        <div class="form-group">
+          <label for="tempLow">Low Temp Alert (°C)</label>
+          <input type="number" id="tempLow" step="0.5" value="18.0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="humidityHigh">High Humidity Alert (%)</label>
+          <input type="number" id="humidityHigh" step="1" value="70">
+        </div>
+        <div class="form-group">
+          <label for="humidityLow">Low Humidity Alert (%)</label>
+          <input type="number" id="humidityLow" step="1" value="30">
+        </div>
+      </div>
+      <div class="notice">
+        Note: Threshold values are illustrative indoor comfort markers, not medical or safety limits.
+      </div>
+    </div>
+
+    <!-- Companion Character (APP-9 / Multi-Pet) -->
+    <div class="section">
+      <div class="section-title">Companion Character</div>
+      <div class="pet-grid">
+        <label class="pet-card">
+          <input type="radio" name="selectedPet" value="blob" checked>
+          <div class="pet-card-content">
+            <div class="pet-avatar">🟢</div>
+            <div class="pet-info">
+              <span class="pet-name">Roomi Spirit</span>
+              <span class="pet-desc">Classic ambient blob with shiver & morph effects.</span>
+            </div>
+          </div>
+        </label>
+        <label class="pet-card">
+          <input type="radio" name="selectedPet" value="cat">
+          <div class="pet-card-content">
+            <div class="pet-avatar">🐱</div>
+            <div class="pet-info">
+              <span class="pet-name">Mochi Neko</span>
+              <span class="pet-desc">Playful kitten with twitching ears & swaying tail.</span>
+            </div>
+          </div>
+        </label>
+        <label class="pet-card">
+          <input type="radio" name="selectedPet" value="penguin">
+          <div class="pet-card-content">
+            <div class="pet-avatar">🐧</div>
+            <div class="pet-info">
+              <span class="pet-name">Pengu</span>
+              <span class="pet-desc">Arctic penguin with flapping flippers & waddling feet.</span>
+            </div>
+          </div>
+        </label>
+        <label class="pet-card">
+          <input type="radio" name="selectedPet" value="robot">
+          <div class="pet-card-content">
+            <div class="pet-avatar">🤖</div>
+            <div class="pet-info">
+              <span class="pet-name">Robo-Node</span>
+              <span class="pet-desc">Cyber automaton with blinking antenna & pixel visor.</span>
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Companion Behaviour -->
+    <div class="section">
+      <div class="section-title">Companion Behaviour</div>
+      <div class="form-group">
+        <label for="walkSpeed">Walk Speed</label>
+        <div class="range-wrap">
+          <input type="range" id="walkSpeed" min="20" max="100" step="5" value="50">
+          <span class="range-val" id="walkSpeedVal">50 px/s</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="sleepAfter">Sleep Inactivity Timeout (minutes)</label>
+        <input type="number" id="sleepAfter" min="1" max="60" value="5">
+      </div>
+    </div>
+
+    <!-- Sound Effects (APP-9 / Audio System) -->
+    <div class="section">
+      <div class="section-title" style="display: flex; align-items: center; justify-content: space-between;">
+        <span>Sound Effects & Audio</span>
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; text-transform: none;">
+          <input type="checkbox" id="soundEnabled" checked> Enable Audio
+        </label>
+      </div>
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="soundVolume">Master Volume</label>
+        <div class="range-wrap">
+          <input type="range" id="soundVolume" min="0" max="100" step="5" value="70">
+          <span class="range-val" id="soundVolumeVal">70 %</span>
+        </div>
+      </div>
+      <div style="margin-top: 10px; display: flex; gap: 8px;">
+        <button type="button" id="btnPreviewPet" class="btn-secondary" style="font-size: 11px; padding: 6px 10px;">🔊 Preview Pet Voice</button>
+        <button type="button" id="btnPreviewEmotion" class="btn-secondary" style="font-size: 11px; padding: 6px 10px;">✨ Preview Reaction Chime</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <span class="saved-msg" id="saved-msg">✓ Settings saved & applied</span>
+      <button type="submit" class="btn-primary">Save Changes</button>
+    </div>
+  </form>
+
+  <script src="../renderer/audio/soundFx.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

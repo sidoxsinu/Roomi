@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets & Configs
+firmware/**/config.h
+.env
+
+# Logs & temp
+*.log
+npm-debug.log*

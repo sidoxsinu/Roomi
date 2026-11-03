@@ -1,0 +1,383 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+#pet-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 6px;
+  cursor: grab;
+}
+
+#pet-container:active {
+  cursor: grabbing;
+}
+
+/* Info Panel Bubble (APP-6) */
+#info-panel {
+  position: absolute;
+  top: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: auto;
+  min-width: 150px;
+}
+
+#info-panel.hidden {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4b6584;
+  margin-bottom: 6px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #20bf6b;
+}
+
+.status-dot.offline {
+  background-color: #eb3b5a;
+}
+
+.sim-badge {
+  background-color: #f7b731;
+  color: #2d3436;
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.panel-readings {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.reading-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.reading-label {
+  font-size: 9px;
+  color: #778ca3;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.reading-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.panel-extra {
+  font-size: 10px;
+  color: #778ca3;
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+}
+
+.panel-reasons {
+  font-size: 10px;
+  color: #eb3b5a;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Speech Bubble */
+#speech-bubble {
+  position: absolute;
+  top: 14px;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #2d3436;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  z-index: 9;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+#speech-bubble.hidden {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+/* Paused Animation State for Low CPU (T10.2) */
+.paused-anim *,
+.paused-anim #character,
+.paused-anim .foot,
+.paused-anim .zzz-text,
+.paused-anim .cat-tail,
+.paused-anim .cat-ear,
+.paused-anim .flipper,
+.paused-anim .antenna-bulb,
+.paused-anim .core-pulse {
+  animation-play-state: paused !important;
+}
+
+/* Pet Specific Animations */
+/* 1. Mochi Cat Tail & Ear Twitch */
+.cat-tail {
+  transform-origin: 125px 125px;
+  animation: cat-tail-sway 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes cat-tail-sway {
+  0% { transform: rotate(-8deg); }
+  100% { transform: rotate(14deg); }
+}
+
+.cat-ear.ear-left {
+  transform-origin: 50px 50px;
+  animation: ear-twitch 5s ease-in-out infinite;
+}
+
+@keyframes ear-twitch {
+  0%, 92%, 100% { transform: rotate(0deg); }
+  94% { transform: rotate(-6deg); }
+  96% { transform: rotate(4deg); }
+}
+
+/* 2. Pengu Flippers */
+#pet-container.walking .flipper-left {
+  animation: flipper-flap-l 0.45s ease-in-out infinite alternate;
+  transform-origin: 30px 85px;
+}
+
+#pet-container.walking .flipper-right {
+  animation: flipper-flap-r 0.45s ease-in-out infinite alternate;
+  transform-origin: 130px 85px;
+}
+
+@keyframes flipper-flap-l {
+  0% { transform: rotate(10deg); }
+  100% { transform: rotate(35deg); }
+}
+
+@keyframes flipper-flap-r {
+  0% { transform: rotate(-35deg); }
+  100% { transform: rotate(-10deg); }
+}
+
+/* 3. Robo-Node Antenna & Core Glow */
+.antenna-bulb {
+  animation: antenna-glow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes antenna-glow {
+  0% { opacity: 0.65; }
+  100% { opacity: 1; filter: drop-shadow(0 0 4px #2ecc71); }
+}
+
+.core-pulse {
+  animation: core-beat 2.4s ease-in-out infinite;
+  transform-origin: 80px 112px;
+}
+
+@keyframes core-beat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.22); }
+}
+
+/* Character Container */
+#character {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  transform-origin: bottom center;
+  animation: idle-bounce 2.6s ease-in-out infinite;
+}
+
+/* Idle Breathing Bounce */
+@keyframes idle-bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.02, 0.98);
+  }
+}
+
+/* Walking Waddle & Feet Movement */
+#pet-container.walking #character {
+  animation: walk-waddle 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes walk-waddle {
+  0% {
+    transform: rotate(-3deg) translateY(0);
+  }
+  100% {
+    transform: rotate(3deg) translateY(-5px);
+  }
+}
+
+#pet-container.walking .foot:nth-child(1) {
+  animation: foot-step-l 0.45s ease-in-out infinite alternate;
+}
+
+#pet-container.walking .foot:nth-child(2) {
+  animation: foot-step-r 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes foot-step-l {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+@keyframes foot-step-r {
+  0% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+/* Jump Reaction */
+#pet-container.jumping #character {
+  animation: jump-reaction 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes jump-reaction {
+  0% {
+    transform: scale(1.15, 0.85) translateY(0);
+  }
+  40% {
+    transform: scale(0.9, 1.15) translateY(-28px);
+  }
+  75% {
+    transform: scale(1.05, 0.95) translateY(2px);
+  }
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+}
+
+/* Cold Shivering */
+#pet-container.shivering #character {
+  animation: shiver 0.12s linear infinite;
+}
+
+@keyframes shiver {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Sleeping */
+#pet-container.sleeping #character {
+  animation: sleep-breathing 4s ease-in-out infinite;
+}
+
+@keyframes sleep-breathing {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.03, 0.96); }
+}
+
+.zzz-text {
+  animation: zzz-float 2.5s ease-in-out infinite;
+}
+
+@keyframes zzz-float {
+  0% {
+    opacity: 0;
+    transform: translate(0, 5px) scale(0.8);
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(8px, -15px) scale(1.2);
+  }
+}
+
+/* Airborne Drag & Drop Physics */
+#character.pet-airborne {
+  transition: transform 0.08s ease-out;
+}
+
+#character.pet-airborne svg {
+  animation: airborne-dangle 0.35s ease-in-out infinite alternate;
+  filter: drop-shadow(0 14px 10px rgba(0, 0, 0, 0.22));
+}
+
+@keyframes airborne-dangle {
+  0% {
+    transform: scale(0.94, 1.06) translateY(-2px);
+  }
+  100% {
+    transform: scale(1.02, 0.98) translateY(3px);
+  }
+}
+
+/* Landing Squash & Stretch Elastic Bounce */
+#character.landing-squash {
+  animation: landing-impact 0.32s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes landing-impact {
+  0% {
+    transform: scale(1.35, 0.65) translateY(6px);
+  }
+  45% {
+    transform: scale(0.92, 1.1) translateY(-6px);
+  }
+  75% {
+    transform: scale(1.05, 0.96) translateY(1px);
+  }
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+}
+
+/* Confetti Container Overlay */
+#confetti-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
