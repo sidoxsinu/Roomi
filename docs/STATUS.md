@@ -22,7 +22,7 @@ Last updated: 2026-11-03
 | FW-5 | GET /health | Written, not flashed | Returns 200 ok (2026-11-03) |
 | FW-6 | mDNS roomi.local | Written, not flashed | ESPmDNS setup with HOSTNAME (2026-11-03) |
 | FW-7 | LED indicator | Written, not flashed | Fast blink (error), slow blink (Wi-Fi), solid (OK) (2026-11-03) |
-| FW-8 | Optional LDR and sound | Planned | |
+| FW-8 | Optional LDR and sound | Written, not flashed | ADC1 analogRead on GPIO 34/35 behind ENABLE flags (2026-11-03) |
 | APP-1 | Transparent always-on-top window | Implemented (mock-tested) | Frameless, transparent, alwaysOnTop window verified (2026-11-03) |
 | APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker moves window along work area, turns at screen edges (2026-11-03) |
 | APP-3 | Poll ESP32 | Implemented (mock-tested) | Polling with AbortController timeout verified (2026-11-03) |

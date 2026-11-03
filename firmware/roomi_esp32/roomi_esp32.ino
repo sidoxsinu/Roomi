@@ -21,6 +21,8 @@ WebServer server(80);
 // Cached state (firmware never sends fabricated fallback values)
 float cachedTemp = 0.0;
 float cachedHumidity = 0.0;
+int cachedLight = -1; // -1 indicates disabled or null
+int cachedSound = -1;
 bool hasValidReading = false;
 String sensorStatus = "online"; // "online" or "error"
 
@@ -52,6 +54,21 @@ void handleData() {
   unsigned long uptime = millis() / 1000;
   char jsonBuffer[384];
 
+  char lightStr[16];
+  char soundStr[16];
+
+  if (ENABLE_LDR && cachedLight >= 0 && sensorStatus == "online") {
+    snprintf(lightStr, sizeof(lightStr), "%d", cachedLight);
+  } else {
+    snprintf(lightStr, sizeof(lightStr), "null");
+  }
+
+  if (ENABLE_SOUND && cachedSound >= 0 && sensorStatus == "online") {
+    snprintf(soundStr, sizeof(soundStr), "%d", cachedSound);
+  } else {
+    snprintf(soundStr, sizeof(soundStr), "null");
+  }
+
   if (sensorStatus == "error" || !hasValidReading) {
     snprintf(jsonBuffer, sizeof(jsonBuffer),
       "{\"device_id\":\"%s\",\"temperature\":null,\"humidity\":null,\"light_raw\":null,\"sound_raw\":null,\"sensor_status\":\"error\",\"uptime_s\":%lu}",
@@ -64,8 +81,8 @@ void handleData() {
     dtostrf(cachedHumidity, 1, 1, humStr);
 
     snprintf(jsonBuffer, sizeof(jsonBuffer),
-      "{\"device_id\":\"%s\",\"temperature\":%s,\"humidity\":%s,\"light_raw\":null,\"sound_raw\":null,\"sensor_status\":\"online\",\"uptime_s\":%lu}",
-      DEVICE_ID, tempStr, humStr, uptime
+      "{\"device_id\":\"%s\",\"temperature\":%s,\"humidity\":%s,\"light_raw\":%s,\"sound_raw\":%s,\"sensor_status\":\"online\",\"uptime_s\":%lu}",
+      DEVICE_ID, tempStr, humStr, lightStr, soundStr, uptime
     );
   }
 
@@ -154,6 +171,19 @@ void setup() {
   #endif
   Serial.print("[ROOMI] DHT Pin: GPIO ");
   Serial.println(DHT_PIN);
+
+  #if (ENABLE_LDR)
+    Serial.print("[ROOMI] LDR Channel Enabled on GPIO ");
+    Serial.println(LDR_PIN);
+    pinMode(LDR_PIN, INPUT);
+  #endif
+
+  #if (ENABLE_SOUND)
+    Serial.print("[ROOMI] Sound Channel Enabled on GPIO ");
+    Serial.println(SOUND_PIN);
+    pinMode(SOUND_PIN, INPUT);
+  #endif
+
   Serial.println("=================================");
 
   pinMode(LED_PIN, OUTPUT);
@@ -188,6 +218,8 @@ void loop() {
     if (isnan(t) || isnan(h)) {
       sensorStatus = "error";
       hasValidReading = false;
+      cachedLight = -1;
+      cachedSound = -1;
       Serial.println("[ROOMI] [ERROR] DHT read failure! sensor_status set to 'error'.");
     } else {
       sensorStatus = "online";
@@ -195,11 +227,35 @@ void loop() {
       cachedTemp = t;
       cachedHumidity = h;
 
+      #if (ENABLE_LDR)
+        cachedLight = analogRead(LDR_PIN); // ADC1 counts (0-4095)
+      #else
+        cachedLight = -1;
+      #endif
+
+      #if (ENABLE_SOUND)
+        cachedSound = analogRead(SOUND_PIN); // ADC1 counts (0-4095)
+      #else
+        cachedSound = -1;
+      #endif
+
       Serial.print("[ROOMI] Temp: ");
       Serial.print(cachedTemp, 1);
       Serial.print(" °C | Hum: ");
       Serial.print(cachedHumidity, 1);
-      Serial.print(" % [Status: online] [WiFi: ");
+      Serial.print(" %");
+
+      #if (ENABLE_LDR)
+        Serial.print(" | Light: ");
+        Serial.print(cachedLight);
+      #endif
+
+      #if (ENABLE_SOUND)
+        Serial.print(" | Sound: ");
+        Serial.print(cachedSound);
+      #endif
+
+      Serial.print(" [Status: online] [WiFi: ");
       Serial.print(isWiFiConnected ? "Connected" : "Connecting");
       Serial.println("]");
     }
