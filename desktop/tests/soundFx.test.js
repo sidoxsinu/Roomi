@@ -155,4 +155,20 @@ describe('Web Audio Procedural Sound Effects Engine', () => {
       assert.ok(engine.ctx.oscillators.length > before, `Expected oscillators scheduled for state: ${st}`);
     }
   });
+
+  it('synthesizes physical landing thud, airborne whoosh, and celebration chimes', () => {
+    engine.initContext();
+
+    const beforeThud = engine.ctx.oscillators.length;
+    engine.playLandThud(600);
+    assert.ok(engine.ctx.oscillators.length > beforeThud);
+
+    const beforeWhoosh = engine.ctx.oscillators.length;
+    engine.playWhoosh();
+    assert.ok(engine.ctx.oscillators.length > beforeWhoosh);
+
+    const beforeCelebration = engine.ctx.oscillators.length;
+    engine.playCelebration();
+    assert.ok(engine.ctx.oscillators.length >= beforeCelebration + 4);
+  });
 });

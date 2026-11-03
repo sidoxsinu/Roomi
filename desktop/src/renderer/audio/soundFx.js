@@ -119,6 +119,54 @@ class SoundFxEngine {
     osc.frequency.exponentialRampToValueAtTime(680, now + 0.2);
   }
 
+  playLandThud(impactVelocity = 300) {
+    // Satisfying low physical impact thump scaled to impact speed
+    const normalized = Math.min(1.0, Math.max(0.2, (impactVelocity || 300) / 800));
+    const startFreq = 120 + normalized * 40;
+    const tone = this.createTone('sine', startFreq, 0.18, {
+      attack: 0.005,
+      decay: 0.16,
+      peak: 0.5 + normalized * 0.4
+    });
+    if (!tone) return;
+    const { osc, now } = tone;
+    osc.frequency.exponentialRampToValueAtTime(45, now + 0.12);
+  }
+
+  playWhoosh() {
+    // Soft air swoosh for fast momentum throws
+    const tone = this.createTone('triangle', 320, 0.25, { attack: 0.05, decay: 0.2, peak: 0.4 });
+    if (!tone) return;
+    const { osc, now } = tone;
+    osc.frequency.exponentialRampToValueAtTime(140, now + 0.22);
+  }
+
+  playCelebration() {
+    // Bright celebratory sparkle chime for happy confetti
+    const ctx = this.initContext();
+    if (!ctx || !this.enabled || this.volume <= 0) return;
+
+    const pitches = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    pitches.forEach((freq, idx) => {
+      const now = ctx.currentTime + (idx * 0.04);
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.4, now + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 0.22);
+    });
+  }
+
   /* -------------------------------------------------------------
    * Pet-Specific Vocalizations (on Click / Greeting)
    * ------------------------------------------------------------- */

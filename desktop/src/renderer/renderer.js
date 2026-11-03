@@ -19,6 +19,22 @@ window.addEventListener('DOMContentLoaded', () => {
   const character = new Character(characterTarget);
   const soundFx = typeof SoundFxEngine !== 'undefined' ? new SoundFxEngine() : null;
 
+  // Confetti celebration helper
+  function fireConfetti() {
+    if (typeof confetti === 'function') {
+      const confettiCanvas = document.getElementById('confetti-canvas');
+      if (confettiCanvas) {
+        const myConfetti = confetti.create(confettiCanvas, { resize: true });
+        myConfetti({
+          particleCount: 30,
+          spread: 60,
+          origin: { y: 0.8 },
+          colors: ['#34d399', '#38bdf8', '#fbbf24', '#f472b6']
+        });
+      }
+    }
+  }
+
   let isHovering = false;
   let isDragging = false;
   let hasDragged = false;
@@ -242,10 +258,69 @@ window.addEventListener('DOMContentLoaded', () => {
             soundFx.playWake();
           } else {
             soundFx.playStateReaction(state);
+            if (state === 'happy') {
+              fireConfetti();
+              soundFx.playCelebration();
+            }
           }
         }
         previousState = state;
         triggerStateSpeech(state);
+      }
+    });
+
+    // Airborne Drag & Drop Physics Feedback
+    let lastWhooshTime = 0;
+    window.roomiApi.onDragState(({ isDragging, isAirborne, vx, vy }) => {
+      if (isDragging) {
+        characterTarget.classList.add('pet-airborne');
+        const tilt = Math.max(-25, Math.min(25, (vx || 0) * 0.04));
+        characterTarget.style.transform = `rotate(${tilt}deg) scale(0.96, 1.04)`;
+
+        const speed = Math.hypot(vx || 0, vy || 0);
+        const now = Date.now();
+        if (speed > 480 && now - lastWhooshTime > 400 && soundFx) {
+          lastWhooshTime = now;
+          soundFx.playWhoosh();
+        }
+      } else if (!isAirborne) {
+        characterTarget.classList.remove('pet-airborne');
+        characterTarget.style.transform = '';
+      }
+    });
+
+    window.roomiApi.onPhysicsUpdate(({ vx, isAirborne }) => {
+      if (isAirborne) {
+        characterTarget.classList.add('pet-airborne');
+        const tilt = Math.max(-20, Math.min(20, (vx || 0) * 0.03));
+        characterTarget.style.transform = `rotate(${tilt}deg)`;
+      } else {
+        characterTarget.classList.remove('pet-airborne');
+        characterTarget.style.transform = '';
+      }
+    });
+
+    window.roomiApi.onLand(({ impactVelocity }) => {
+      characterTarget.classList.remove('pet-airborne');
+      characterTarget.style.transform = '';
+
+      // Landing squash-and-stretch
+      characterTarget.classList.remove('landing-squash');
+      void characterTarget.offsetWidth; // Reflow
+      characterTarget.classList.add('landing-squash');
+
+      setTimeout(() => {
+        characterTarget.classList.remove('landing-squash');
+      }, 350);
+
+      // Play impact audio
+      if (soundFx) {
+        soundFx.playLandThud(impactVelocity);
+      }
+
+      if (impactVelocity > 450) {
+        const landMsgs = ['Safe landing! ✨', 'Wheee! 🎈', 'Oof, that was a drop! 💫', 'Bounce! 🐾'];
+        showSpeech(landMsgs[Math.floor(Math.random() * landMsgs.length)], 2200);
       }
     });
 
