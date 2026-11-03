@@ -81,6 +81,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     try {
       const current = await window.roomiApi.getSettings();
       if (current) {
+        if (current.selectedPet) {
+          const petRadio = document.querySelector(`input[name="selectedPet"][value="${current.selectedPet}"]`);
+          if (petRadio) petRadio.checked = true;
+        }
         hostInput.value = current.host || 'roomi.local';
         portInput.value = current.port || 80;
         pollInput.value = Math.round((current.pollIntervalMs || 3000) / 1000);
@@ -103,7 +107,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    const selectedPetRadio = document.querySelector('input[name="selectedPet"]:checked');
+    const selectedPet = selectedPetRadio ? selectedPetRadio.value : 'blob';
+
     const newSettings = {
+      selectedPet,
       host: hostInput.value.trim(),
       port: parseInt(portInput.value, 10),
       pollIntervalMs: Math.max(1, parseInt(pollInput.value, 10)) * 1000,

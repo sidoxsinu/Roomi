@@ -144,6 +144,76 @@
       margin-right: auto;
       display: none;
     }
+
+    /* Companion Character Selector (APP-9 / Multi-Pet) */
+    .pet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .pet-card {
+      display: block;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .pet-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .pet-card-content {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      background: #ffffff;
+    }
+
+    .pet-card:hover .pet-card-content {
+      border-color: #cbd5e1;
+    }
+
+    .pet-card input[type="radio"]:checked + .pet-card-content {
+      border-color: var(--primary);
+      background: #eff6ff;
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .pet-avatar {
+      font-size: 26px;
+      line-height: 1;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pet-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .pet-name {
+      font-weight: 600;
+      font-size: 12px;
+      color: #0f172a;
+    }
+
+    .pet-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.25;
+    }
   </style>
 </head>
 <body>
@@ -224,6 +294,53 @@
       </div>
       <div class="notice">
         Note: Threshold values are illustrative indoor comfort markers, not medical or safety limits.
+      </div>
+    </div>
+
+    <!-- Companion Character (APP-9 / Multi-Pet) -->
+    <div class="section">
+      <div class="section-title">Companion Character</div>
+      <div class="pet-grid">
+        <label class="pet-card">
+          <input type="radio" name="selectedPet" value="blob" checked>
+          <div class="pet-card-content">
+            <div class="pet-avatar">🟢</div>
+            <div class="pet-info">
+              <span class="pet-name">Roomi Spirit</span>
+              <span class="pet-desc">Classic ambient blob with shiver & morph effects.</span>
+            </div>
+          </div>
+        </label>
+        <label class="pet-card">
+          <input type="radio" name="selectedPet" value="cat">
+          <div class="pet-card-content">
+            <div class="pet-avatar">🐱</div>
+            <div class="pet-info">
+              <span class="pet-name">Mochi Neko</span>
+              <span class="pet-desc">Playful kitten with twitching ears & swaying tail.</span>
+            </div>
+          </div>
+        </label>
+        <label class="pet-card">
+          <input type="radio" name="selectedPet" value="penguin">
+          <div class="pet-card-content">
+            <div class="pet-avatar">🐧</div>
+            <div class="pet-info">
+              <span class="pet-name">Pengu</span>
+              <span class="pet-desc">Arctic penguin with flapping flippers & waddling feet.</span>
+            </div>
+          </div>
+        </label>
+        <label class="pet-card">
+          <input type="radio" name="selectedPet" value="robot">
+          <div class="pet-card-content">
+            <div class="pet-avatar">🤖</div>
+            <div class="pet-info">
+              <span class="pet-name">Robo-Node</span>
+              <span class="pet-desc">Cyber automaton with blinking antenna & pixel visor.</span>
+            </div>
+          </div>
+        </label>
       </div>
     </div>
 

@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-03 | feat(desktop) | add pet selector to settings window | APP-9
 - 2026-11-03 | feat(desktop) | support live pet switching via ipc | APP-9
 - 2026-11-03 | feat(character) | add animated cat, penguin, and robot pets | APP-5
 - 2026-11-03 | feat(desktop) | add pet selection to settings schema | APP-9, APP-14

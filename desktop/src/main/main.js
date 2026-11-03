@@ -199,10 +199,10 @@ function openSettingsWindow() {
   }
 
   settingsWindow = new BrowserWindow({
-    width: 440,
-    height: 590,
+    width: 480,
+    height: 680,
     title: 'ROOMI Settings',
-    resizable: false,
+    resizable: true,
     minimizable: true,
     maximizable: false,
     webPreferences: {
