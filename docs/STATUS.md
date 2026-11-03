@@ -2,7 +2,7 @@
 
 Agent: update this file in every commit that changes status. Allowed statuses: Planned, In progress, Written (not run), Implemented (mock-tested), Implemented (hardware-tested), Blocked. Add a date and a one-line evidence note (what was actually run). Never mark hardware-tested without the student confirming a real run.
 
-Last updated: 2026-11-03
+Last updated: 2026-11-04
 
 ## Hardware facts (fill when confirmed by the student)
 
@@ -24,7 +24,7 @@ Last updated: 2026-11-03
 | FW-7 | LED indicator | Written, not flashed | Fast blink (error), slow blink (Wi-Fi), solid (OK) (2026-11-03) |
 | FW-8 | Optional LDR and sound | Written, not flashed | ADC1 analogRead on GPIO 34/35 behind ENABLE flags (2026-11-03) |
 | APP-1 | Transparent always-on-top window | Implemented (mock-tested) | Frameless, transparent, alwaysOnTop window verified (2026-11-03) |
-| APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker moves window; gravity drop, ceiling rebound & bounce physics verified (2026-11-04) |
+| APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker and drag bounds follow the display containing the character window; gravity drop, ceiling rebound & bounce physics verified (2026-11-04) |
 | APP-3 | Poll ESP32 | Implemented (mock-tested) | Polling with AbortController timeout verified (2026-11-03) |
 | APP-4 | Validate and detect disconnect | Implemented (mock-tested) | Strict shape/range validation and disconnect detection verified (2026-11-03) |
 | APP-5 | Threshold-driven states | Implemented (mock-tested) | Priority/hysteresis reaction engine; 4 companion models & state audio synthesized (2026-11-03) |

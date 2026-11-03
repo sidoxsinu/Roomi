@@ -58,6 +58,9 @@ class Walker {
   }
 
   getWorkArea() {
+    if (this.window && !this.window.isDestroyed()) {
+      return screen.getDisplayMatching(this.window.getBounds()).workArea;
+    }
     return screen.getPrimaryDisplay().workArea;
   }
 

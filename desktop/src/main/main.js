@@ -352,7 +352,7 @@ function initApp() {
     resetInactivity();
     if (!mainWindow || mainWindow.isDestroyed()) return;
     const currentPos = mainWindow.getPosition();
-    const workArea = screen.getPrimaryDisplay().workArea;
+    const workArea = screen.getDisplayMatching(mainWindow.getBounds()).workArea;
     const winSize = mainWindow.getSize();
 
     const floorY = Math.round(workArea.y + workArea.height - winSize[1]);
