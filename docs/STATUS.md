@@ -36,7 +36,7 @@ Last updated: 2026-11-03
 | APP-11 | Tray / menu-bar | Implemented (mock-tested) | Menu bar / system tray with Show/Hide and Quit verified (2026-11-03) |
 | APP-12 | Simulation mode | Planned | |
 | APP-13 | Mouse-follow | Planned | |
-| APP-14 | Persistent settings | Planned | |
+| APP-14 | Persistent settings | Implemented (mock-tested) | Settings storage and validation module verified (2026-11-03) |
 | TOOL-1 | Mock sensor server | Implemented (mock-tested) | /data, /health, /control, and failure mode verified (2026-11-03) |
 
 ## Milestones
