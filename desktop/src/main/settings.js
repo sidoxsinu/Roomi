@@ -120,3 +120,4 @@ module.exports = {
   validateAndMergeSettings,
   DEFAULT_SETTINGS
 };
+

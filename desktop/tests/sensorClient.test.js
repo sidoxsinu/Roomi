@@ -71,3 +71,4 @@ describe('Sensor Data Validation (APP-4)', () => {
     assert.match(res.error, /must be null when sensor_status is error/);
   });
 });
+

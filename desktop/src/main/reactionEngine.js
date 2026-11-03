@@ -142,3 +142,4 @@ module.exports = {
   DEFAULT_THRESHOLDS,
   HYSTERESIS
 };
+

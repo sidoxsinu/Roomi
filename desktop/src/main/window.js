@@ -38,3 +38,4 @@ function createCharacterWindow() {
 }
 
 module.exports = { createCharacterWindow };
+

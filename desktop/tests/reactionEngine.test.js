@@ -95,3 +95,4 @@ describe('Reaction Engine Consecutive Reading Filter', () => {
     assert.strictEqual(step2.tracker.count, 0);
   });
 });
+

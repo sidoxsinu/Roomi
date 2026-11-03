@@ -10,3 +10,4 @@ const child = spawn(electron, args, { stdio: 'inherit', env, windowsHide: false 
 child.on('exit', (code) => {
   process.exit(code || 0);
 });
+
