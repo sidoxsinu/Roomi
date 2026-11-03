@@ -4,16 +4,36 @@ window.addEventListener('DOMContentLoaded', () => {
   const characterTarget = document.getElementById('character');
   const character = new Character(characterTarget);
 
+  let isHovering = false;
+
+  // Robust forwarded-event hover detection (APP-10)
+  window.addEventListener('mousemove', (event) => {
+    const target = document.elementFromPoint(event.clientX, event.clientY);
+    const isOverCharacter = target && (target.closest('#character') || target.closest('#speech-bubble') || target.closest('#info-panel'));
+
+    if (isOverCharacter && !isHovering) {
+      isHovering = true;
+      if (window.roomiApi) {
+        window.roomiApi.setHover(true);
+      }
+    } else if (!isOverCharacter && isHovering) {
+      isHovering = false;
+      if (window.roomiApi) {
+        window.roomiApi.setHover(false);
+      }
+    }
+  });
+
+  document.addEventListener('mouseleave', () => {
+    if (isHovering) {
+      isHovering = false;
+      if (window.roomiApi) {
+        window.roomiApi.setHover(false);
+      }
+    }
+  });
+
   if (window.roomiApi) {
-    // Notify main when pointer enters/leaves pet bounds to toggle click-through (APP-10)
-    container.addEventListener('mouseenter', () => {
-      window.roomiApi.setHover(true);
-    });
-
-    container.addEventListener('mouseleave', () => {
-      window.roomiApi.setHover(false);
-    });
-
     // Listen to walker direction updates
     window.roomiApi.onWalkerDirection(({ dir, walking }) => {
       character.setDirection(dir, walking);
@@ -25,6 +45,6 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Expose character for tests/interactions
+  // Expose character for testing and interaction
   window.character = character;
 });
