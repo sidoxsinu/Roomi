@@ -17,9 +17,9 @@ Last updated: 2026-11-03
 |---|---|---|---|
 | FW-1 | Read DHT | Written, not flashed | DHT read skeleton to Serial (2026-11-03) |
 | FW-2 | Wi-Fi + reconnect | Written, not flashed | Non-blocking reconnect loop implemented (2026-11-03) |
-| FW-3 | GET /data | Planned | |
+| FW-3 | GET /data | Written, not flashed | Cached JSON response with CORS implemented (2026-11-03) |
 | FW-4 | Error status, no fake values | Written, not flashed | Reports error on isnan(), never sends fabricated numbers (2026-11-03) |
-| FW-5 | GET /health | Planned | |
+| FW-5 | GET /health | Written, not flashed | Returns 200 ok (2026-11-03) |
 | FW-6 | mDNS roomi.local | Planned | |
 | FW-7 | LED indicator | Planned | |
 | FW-8 | Optional LDR and sound | Planned | |

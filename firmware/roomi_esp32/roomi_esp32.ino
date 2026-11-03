@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <WebServer.h>
 #include <DHT.h>
 
 #if __has_include("config.h")
@@ -14,6 +15,7 @@
 #endif
 
 DHT dht(DHT_PIN, SENSOR_TYPE);
+WebServer server(80);
 
 // Cached state (firmware never sends fabricated fallback values)
 float cachedTemp = 0.0;
@@ -33,6 +35,56 @@ bool isWiFiConnected = false;
 unsigned long lastLedToggle = 0;
 bool ledState = false;
 
+void handleRoot() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", "ROOMI ESP32 Sensor Node. Endpoints: /data, /health");
+}
+
+void handleHealth() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", "ok");
+}
+
+void handleData() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+
+  unsigned long uptime = millis() / 1000;
+  char jsonBuffer[384];
+
+  if (sensorStatus == "error" || !hasValidReading) {
+    snprintf(jsonBuffer, sizeof(jsonBuffer),
+      "{\"device_id\":\"%s\",\"temperature\":null,\"humidity\":null,\"light_raw\":null,\"sound_raw\":null,\"sensor_status\":\"error\",\"uptime_s\":%lu}",
+      DEVICE_ID, uptime
+    );
+  } else {
+    char tempStr[16];
+    char humStr[16];
+    dtostrf(cachedTemp, 1, 1, tempStr);
+    dtostrf(cachedHumidity, 1, 1, humStr);
+
+    snprintf(jsonBuffer, sizeof(jsonBuffer),
+      "{\"device_id\":\"%s\",\"temperature\":%s,\"humidity\":%s,\"light_raw\":null,\"sound_raw\":null,\"sensor_status\":\"online\",\"uptime_s\":%lu}",
+      DEVICE_ID, tempStr, humStr, uptime
+    );
+  }
+
+  server.send(200, "application/json", jsonBuffer);
+}
+
+void handleNotFound() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(404, "text/plain", "Not Found");
+}
+
+void setupHttpServer() {
+  server.on("/", HTTP_GET, handleRoot);
+  server.on("/health", HTTP_GET, handleHealth);
+  server.on("/data", HTTP_GET, handleData);
+  server.onNotFound(handleNotFound);
+  server.begin();
+  Serial.println("[ROOMI] [HTTP] Web server started on port 80.");
+}
+
 void checkWiFiConnection() {
   unsigned long now = millis();
   if (WiFi.status() == WL_CONNECTED) {
@@ -40,6 +92,7 @@ void checkWiFiConnection() {
       isWiFiConnected = true;
       Serial.print("[ROOMI] [WiFi] Connected! IP Address: ");
       Serial.println(WiFi.localIP());
+      setupHttpServer();
     }
     return;
   }
@@ -107,7 +160,12 @@ void loop() {
   // 1. Maintain Wi-Fi connection non-blockingly
   checkWiFiConnection();
 
-  // 2. Non-blocking sensor reading every 2000 ms
+  // 2. Handle HTTP clients if connected
+  if (isWiFiConnected) {
+    server.handleClient();
+  }
+
+  // 3. Non-blocking sensor reading every 2000 ms
   if (now - lastReadTime >= READ_INTERVAL_MS) {
     lastReadTime = now;
 
@@ -134,6 +192,6 @@ void loop() {
     }
   }
 
-  // 3. Update Status LED
+  // 4. Update Status LED
   updateStatusLed();
 }
