@@ -3,6 +3,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('pet-container');
   const characterTarget = document.getElementById('character');
   const infoPanel = document.getElementById('info-panel');
+  const speechBubble = document.getElementById('speech-bubble');
+  const speechText = document.getElementById('speech-text');
+
   const valTemp = document.getElementById('val-temp');
   const valHumidity = document.getElementById('val-humidity');
   const valLight = document.getElementById('val-light');
@@ -21,6 +24,34 @@ window.addEventListener('DOMContentLoaded', () => {
   let dragStartX = 0;
   let dragStartY = 0;
   let panelHideTimer = null;
+  let speechHideTimer = null;
+
+  const SPEECH_MESSAGES = {
+    happy: ["Feeling comfortable! ☀️", "Nice room conditions! ✨", "All good here! 😊"],
+    hot: ["It's toasty in here! 🌡️", "A bit warm today! ☀️", "Fanning myself! ♨️"],
+    cold: ["Brrr... chilly! ❄️", "A little cold in here! 🧤", "Shivering a bit! 🧊"],
+    humid: ["Feels muggy! 💧", "A bit sticky in here! 🌧️"],
+    dry: ["Air feels dry! 🥤", "Could use a sip of water! 🏜️"],
+    disconnected: ["Searching for sensor... ❓", "Where's the ESP32? 📡"],
+    sleeping: ["Zzz... 🌙", "Taking a catnap... 💤"],
+    click: ["Wheee! ✨", "Hi there! 👋", "Bouncy bounce! 🎈"]
+  };
+
+  function showSpeech(text, durationMs = 3500) {
+    if (speechHideTimer) clearTimeout(speechHideTimer);
+    speechText.textContent = text;
+    speechBubble.classList.remove('hidden');
+
+    speechHideTimer = setTimeout(() => {
+      speechBubble.classList.add('hidden');
+    }, durationMs);
+  }
+
+  function triggerStateSpeech(state) {
+    const list = SPEECH_MESSAGES[state] || SPEECH_MESSAGES.happy;
+    const msg = list[Math.floor(Math.random() * list.length)];
+    showSpeech(msg);
+  }
 
   function showPanel() {
     if (panelHideTimer) clearTimeout(panelHideTimer);
@@ -100,8 +131,10 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     if (!hasDragged) {
-      // It was a click!
+      // It was a click! (APP-7)
       character.jump();
+      const clickMsg = SPEECH_MESSAGES.click[Math.floor(Math.random() * SPEECH_MESSAGES.click.length)];
+      showSpeech(clickMsg, 2000);
       showPanel();
       hidePanelAfter(4000);
       if (window.roomiApi) {
@@ -117,6 +150,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // Listen to character state updates (APP-5)
+    let previousState = 'happy';
     window.roomiApi.onCharacterState(({ state, reasons }) => {
       character.setState(state);
 
@@ -125,6 +159,12 @@ window.addEventListener('DOMContentLoaded', () => {
         panelReasons.style.display = 'block';
       } else {
         panelReasons.style.display = 'none';
+      }
+
+      // Trigger friendly speech bubble on meaningful state change
+      if (state !== previousState) {
+        previousState = state;
+        triggerStateSpeech(state);
       }
     });
 
@@ -173,4 +213,5 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Expose character for testing and interaction
   window.character = character;
+  window.showSpeech = showSpeech;
 });

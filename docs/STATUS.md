@@ -50,7 +50,7 @@ Last updated: 2026-11-03
 | M4 Electron shell | Implemented (mock-tested) | Window, tray, IPC, and cross-platform launcher verified (2026-11-03) |
 | M5 Character and walking | Implemented (mock-tested) | Character SVG, walker, click-through, drag, jump, and sleep verified (2026-11-03) |
 | M6 Sensor integration | Implemented (mock-tested) | Sensor client, reaction engine, state wiring, and info panel verified (2026-11-03) |
-| M7 Remaining states | Planned |
+| M7 Remaining states | Implemented (mock-tested) | All character states (hot, cold, humid, dry, disconnected) & speech bubbles verified (2026-11-03) |
 | M8 Settings and simulation | Planned |
 | M9 Optional sensors | Planned |
 | M10 Hardening and MVP | Planned |
