@@ -1,26 +1,37 @@
 const { app, BrowserWindow, ipcMain, screen } = require('electron');
+const path = require('path');
 const { createCharacterWindow } = require('./window');
 const { setupTray } = require('./tray');
 const { Walker } = require('./walker');
 const { SensorClient } = require('./sensorClient');
-const { resolveState, DEFAULT_THRESHOLDS } = require('./reactionEngine');
+const { resolveState } = require('./reactionEngine');
+const { SettingsManager } = require('./settings');
 
 let mainWindow = null;
+let settingsWindow = null;
 let tray = null;
 let walker = null;
 let sensorClient = null;
+let settingsManager = null;
+let currentSettings = null;
 let dragOriginWinPos = null;
 
-// Settings & Thresholds
-let thresholds = { ...DEFAULT_THRESHOLDS };
-
 // Sleep Inactivity State Management (APP-8)
-let sleepTimeoutMs = 5 * 60 * 1000; // Default 5 minutes
 let sleepTimer = null;
 let isSleeping = false;
 let currentResolvedState = 'happy';
 let stateTracker = { candidate: 'happy', count: 0 };
 let lastReading = null;
+
+// Simulation Mode State (APP-12)
+let isSimulationMode = false;
+let simulationData = {
+  temperature: 24.5,
+  humidity: 55.0,
+  sensor_status: 'online',
+  light_raw: null,
+  sound_raw: null
+};
 
 function emitCharacterState(state, reasons = []) {
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -30,7 +41,10 @@ function emitCharacterState(state, reasons = []) {
 
 function emitSensorUpdate(data) {
   if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('sensor:update', data);
+    mainWindow.webContents.send('sensor:update', {
+      ...data,
+      isSimulation: isSimulationMode
+    });
   }
 }
 
@@ -49,6 +63,7 @@ function resetInactivity() {
     emitCharacterState(currentResolvedState);
   }
 
+  const timeoutMs = (currentSettings?.sleepAfterMinutes || 5) * 60 * 1000;
   sleepTimer = setTimeout(() => {
     // Sleep only applies when resolved state is happy per 06-CHARACTER-BEHAVIOUR.md
     if (currentResolvedState === 'happy' && !isSleeping) {
@@ -56,10 +71,12 @@ function resetInactivity() {
       if (walker) walker.pause('sleeping');
       emitCharacterState('sleeping');
     }
-  }, sleepTimeoutMs);
+  }, timeoutMs);
 }
 
 function handleSensorReading(reading) {
+  if (isSimulationMode) return; // Simulation overrides real sensor
+
   lastReading = reading;
   emitSensorUpdate(reading);
 
@@ -70,7 +87,7 @@ function handleSensorReading(reading) {
       status: reading.sensor_status,
       connected: sensorClient ? sensorClient.isConnected : false
     },
-    thresholds,
+    currentSettings.thresholds,
     currentResolvedState,
     stateTracker
   );
@@ -101,12 +118,13 @@ function handleSensorReading(reading) {
     } else if (currentResolvedState === 'cold') {
       walker.speedPxPerSec = 36; // Shivering short steps
     } else {
-      walker.speedPxPerSec = 50; // Normal brisk pace
+      walker.speedPxPerSec = currentSettings.walkSpeedPxPerSec || 50;
     }
   }
 }
 
 function handleSensorStatus({ connected, reason }) {
+  if (isSimulationMode) return;
   emitSensorStatus({ connected, reason });
 
   if (!connected) {
@@ -117,7 +135,7 @@ function handleSensorStatus({ connected, reason }) {
         status: 'error',
         connected: false
       },
-      thresholds,
+      currentSettings.thresholds,
       currentResolvedState,
       stateTracker
     );
@@ -131,27 +149,113 @@ function handleSensorStatus({ connected, reason }) {
   }
 }
 
+function applySimulationReading() {
+  const isErr = simulationData.sensor_status === 'error';
+  const reading = {
+    device_id: 'roomi-sim-node',
+    temperature: isErr ? null : simulationData.temperature,
+    humidity: isErr ? null : simulationData.humidity,
+    light_raw: isErr ? null : simulationData.light_raw,
+    sound_raw: isErr ? null : simulationData.sound_raw,
+    sensor_status: simulationData.sensor_status,
+    uptime_s: 9999,
+    receivedAt: Date.now(),
+    isSimulation: true
+  };
+
+  emitSensorUpdate(reading);
+  emitSensorStatus({ connected: !isErr, isSimulation: true });
+
+  const resolved = resolveState(
+    {
+      temperature: reading.temperature,
+      humidity: reading.humidity,
+      status: reading.sensor_status,
+      connected: !isErr
+    },
+    currentSettings.thresholds,
+    currentResolvedState,
+    stateTracker
+  );
+
+  stateTracker = resolved.tracker;
+  currentResolvedState = resolved.state;
+
+  if (isSleeping && currentResolvedState !== 'happy') {
+    isSleeping = false;
+    if (walker) walker.resume('sleeping');
+  }
+
+  if (!isSleeping) {
+    emitCharacterState(currentResolvedState, resolved.reasons);
+  }
+}
+
+function openSettingsWindow() {
+  if (settingsWindow && !settingsWindow.isDestroyed()) {
+    settingsWindow.show();
+    settingsWindow.focus();
+    return;
+  }
+
+  settingsWindow = new BrowserWindow({
+    width: 440,
+    height: 590,
+    title: 'ROOMI Settings',
+    resizable: false,
+    minimizable: true,
+    maximizable: false,
+    webPreferences: {
+      preload: path.join(__dirname, '../preload/preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true
+    }
+  });
+
+  settingsWindow.loadFile(path.join(__dirname, '../settings/settings.html'));
+
+  settingsWindow.on('closed', () => {
+    settingsWindow = null;
+  });
+}
+
 function initApp() {
+  // Load settings (APP-14)
+  const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+  settingsManager = new SettingsManager(settingsPath);
+  currentSettings = settingsManager.load();
+
   mainWindow = createCharacterWindow();
 
   // Setup system tray menu (APP-11)
-  tray = setupTray(mainWindow);
+  tray = setupTray(mainWindow, {
+    onOpenSettings: openSettingsWindow
+  });
 
   // Setup Walker moving the window (APP-2)
-  walker = new Walker(mainWindow);
+  walker = new Walker(mainWindow, {
+    speedPxPerSec: currentSettings.walkSpeedPxPerSec
+  });
   walker.start();
 
   // Setup Sensor Client (APP-3, APP-4)
-  // Use mock server port 8080 or roomi.local
   sensorClient = new SensorClient({
-    host: process.env.ROOMI_HOST || 'localhost',
-    port: parseInt(process.env.ROOMI_PORT || '8080', 10),
-    pollIntervalMs: 3000
+    host: process.env.ROOMI_HOST || currentSettings.host,
+    port: parseInt(process.env.ROOMI_PORT || currentSettings.port, 10),
+    pollIntervalMs: currentSettings.pollIntervalMs
   });
 
   sensorClient.on('sensor:update', handleSensorReading);
   sensorClient.on('sensor:status', handleSensorStatus);
-  sensorClient.start();
+
+  // Check if CLI --sim flag is passed
+  if (process.argv.includes('--sim') || currentSettings.simulation) {
+    isSimulationMode = true;
+    setTimeout(() => applySimulationReading(), 500);
+  } else {
+    sensorClient.start();
+  }
 
   // Initialize inactivity sleep timer
   resetInactivity();
@@ -216,6 +320,36 @@ function initApp() {
     }
   });
 
+  // Settings IPC Handlers (APP-9, APP-14)
+  ipcMain.handle('settings:get', () => {
+    return currentSettings;
+  });
+
+  ipcMain.handle('settings:set', (_event, newSettings) => {
+    currentSettings = settingsManager.save(newSettings);
+
+    // Apply live changes
+    if (walker) walker.speedPxPerSec = currentSettings.walkSpeedPxPerSec;
+    if (sensorClient) {
+      sensorClient.setHost(currentSettings.host, currentSettings.port);
+      sensorClient.setPollInterval(currentSettings.pollIntervalMs);
+    }
+    resetInactivity();
+
+    // Re-evaluate current state with new thresholds
+    if (lastReading) {
+      handleSensorReading(lastReading);
+    }
+    return currentSettings;
+  });
+
+  // Simulation IPC handler (APP-12)
+  ipcMain.on('sim:set', (_event, data) => {
+    isSimulationMode = true;
+    simulationData = { ...simulationData, ...data };
+    applySimulationReading();
+  });
+
   mainWindow.on('closed', () => {
     if (sleepTimer) clearTimeout(sleepTimer);
     if (walker) walker.stop();
@@ -243,5 +377,6 @@ app.on('window-all-closed', () => {
 module.exports = {
   getWalker: () => walker,
   getSensorClient: () => sensorClient,
+  openSettingsWindow,
   resetInactivity
 };
