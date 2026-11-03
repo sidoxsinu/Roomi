@@ -56,6 +56,21 @@ describe('Settings Validation & Merging (APP-9, APP-14)', () => {
     assert.strictEqual(invalid.selectedPet, DEFAULT_SETTINGS.selectedPet);
   });
 
+  it('validates soundEnabled and soundVolume boundaries', () => {
+    const muted = validateAndMergeSettings({ soundEnabled: false });
+    assert.strictEqual(muted.soundEnabled, false);
+    assert.strictEqual(muted.sound, false);
+
+    const customVol = validateAndMergeSettings({ soundVolume: 45 });
+    assert.strictEqual(customVol.soundVolume, 45);
+
+    const clampedLow = validateAndMergeSettings({ soundVolume: -20 });
+    assert.strictEqual(clampedLow.soundVolume, DEFAULT_SETTINGS.soundVolume);
+
+    const clampedHigh = validateAndMergeSettings({ soundVolume: 150 });
+    assert.strictEqual(clampedHigh.soundVolume, DEFAULT_SETTINGS.soundVolume);
+  });
+
   it('persists and loads settings from temporary disk file', () => {
     const tempFile = path.join(os.tmpdir(), `roomi-test-settings-${Date.now()}.json`);
     try {

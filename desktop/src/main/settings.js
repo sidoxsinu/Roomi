@@ -13,7 +13,9 @@ const DEFAULT_SETTINGS = {
   },
   walkSpeedPxPerSec: 50,
   sleepAfterMinutes: 5,
-  sound: false,
+  sound: true,
+  soundEnabled: true,
+  soundVolume: 70,
   simulation: false,
   selectedPet: 'blob'
 };
@@ -70,7 +72,14 @@ function validateAndMergeSettings(raw = {}) {
   const sleep = parseInt(merged.sleepAfterMinutes, 10);
   merged.sleepAfterMinutes = !isNaN(sleep) && sleep >= 1 && sleep <= 60 ? sleep : DEFAULT_SETTINGS.sleepAfterMinutes;
 
-  merged.sound = Boolean(merged.sound);
+  // Sound settings (APP-9 / Audio System)
+  const soundVal = raw.soundEnabled !== undefined ? Boolean(raw.soundEnabled) : (raw.sound !== undefined ? Boolean(raw.sound) : DEFAULT_SETTINGS.soundEnabled);
+  merged.soundEnabled = soundVal;
+  merged.sound = soundVal; // Keep synchronized for backward compatibility
+
+  const vol = parseInt(raw.soundVolume !== undefined ? raw.soundVolume : merged.soundVolume, 10);
+  merged.soundVolume = !isNaN(vol) && vol >= 0 && vol <= 100 ? vol : DEFAULT_SETTINGS.soundVolume;
+
   merged.simulation = Boolean(merged.simulation);
 
   // Validate Selected Pet (APP-9 extension)

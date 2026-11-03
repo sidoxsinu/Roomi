@@ -31,12 +31,12 @@ Last updated: 2026-11-03
 | APP-6 | Readings panel | Implemented (mock-tested) | Readings panel bubble with live temp, humidity, status verified (2026-11-03) |
 | APP-7 | Click and drag | Implemented (mock-tested) | Jump reaction on click, manual drag repositioning verified (2026-11-03) |
 | APP-8 | Idle and sleep | Implemented (mock-tested) | Idle animation and inactivity sleep with wake-on-interaction verified; 4 unique pet idle animations (2026-11-03) |
-| APP-9 | Settings window | Implemented (mock-tested) | Settings window with live IPC, companion pet selector, and disclaimer verified (2026-11-03) |
+| APP-9 | Settings window | Implemented (mock-tested) | Settings window with live IPC, companion pet selector, sound controls, and disclaimer verified (2026-11-03) |
 | APP-10 | Click-through | Implemented (mock-tested) | Forwarded mousemove hover toggling implemented (2026-11-03) |
 | APP-11 | Tray / menu-bar | Implemented (mock-tested) | Menu bar / system tray with Show/Hide and Quit verified (2026-11-03) |
 | APP-12 | Simulation mode | Implemented (mock-tested) | Simulation mode with sliders and SIMULATION badge verified (2026-11-03) |
 | APP-13 | Mouse-follow | Planned | Optional v1.1 extension (2026-11-03) |
-| APP-14 | Persistent settings | Implemented (mock-tested) | Settings storage and validation module verified (2026-11-03) |
+| APP-14 | Persistent settings | Implemented (mock-tested) | Settings storage, validation, sound options, and pet selection verified (2026-11-03) |
 | TOOL-1 | Mock sensor server | Implemented (mock-tested) | /data, /health, /control, and failure mode verified (2026-11-03) |
 
 ## Milestones
