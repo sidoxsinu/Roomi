@@ -2,10 +2,15 @@
 
 Agent: update this file in every commit that changes status. Allowed statuses: Planned, In progress, Written (not run), Implemented (mock-tested), Implemented (hardware-tested), Blocked. Add a date and a one-line evidence note (what was actually run). Never mark hardware-tested without the student confirming a real run.
 
-Last updated: 2026-11-03
+Last updated: 2026-11-04
+
+## System Architecture Facts
+- Architecture: Dual Robotic Companion System (Part 1: Physical Robot Node on desk; Part 2: Digital Robot Twin on desktop screen)
+- Both components synchronously monitor and respond to ambient room temperature and humidity.
 
 ## Hardware facts (fill when confirmed by the student)
 
+- Physical Robot chassis / enclosure: desk-mounted robot form factor
 - ESP32 board model: unconfirmed (defaulted to ESP32 Dev Module in code)
 - DHT sensor model (DHT11/DHT22): unconfirmed (defaulted to DHT11 behind `SENSOR_TYPE` switch)
 - LDR available: unconfirmed (implemented on ADC1 GPIO 34 behind `ENABLE_LDR` flag)

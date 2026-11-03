@@ -1,41 +1,50 @@
 # ROOMI Product Requirements Document (PRD)
 
-Version: 1.0 | Status: Approved for development start
+Version: 1.1 | Status: Approved (Pivoted to Dual Robotic Companion Architecture)
 
 ## 1. Summary
 
-ROOMI is a desktop companion. An ESP32 with a DHT temperature/humidity sensor sends readings over Wi-Fi to an Electron app. The app shows an animated character that walks on top of the user's actual desktop and changes expression and behaviour with the room's conditions.
+ROOMI is an IoT robotic companion built around an ESP32 microcontroller and a DHT temperature/humidity sensor. It consists of two seamlessly synchronized parts:
+1. **The Physical Robot Node**: A compact desk-mounted physical robot containing the ESP32, environmental DHT sensor, status beacon/LED, and optional sensory channels (LDR light, sound).
+2. **The Digital Robot Model (Digital Twin)**: An interactive Electron desktop companion that walks across the user's actual screen, mirroring the physical robot's environmental state, expressions, and telemetry in real time.
+
+Both the physical robot and the digital model respond synchronously to the room's temperature and humidity.
 
 ## 2. Problem
 
-Environmental readings are shown as raw numbers on dashboards that people rarely check. ROOMI makes the conditions of a room visible and engaging through a character, so changes are noticed without reading a dashboard.
+Environmental readings are traditionally shown as raw numbers on distant wall meters or web dashboards that people rarely check. ROOMI bridges the physical and digital worlds: a physical robot on your desk paired with a digital robot twin on your screen turns invisible indoor air conditions into intuitive, engaging robotic expressions.
 
 ## 3. Aim
 
-Design and develop an IoT-enabled desktop companion that monitors real-world environmental conditions using an ESP32 and connected sensors, and represents the data through an animated virtual character on the user's desktop.
+Design and develop a dual-component IoT robotic companion that monitors real-world environmental conditions using an ESP32-based physical robot, and represents the live conditions through a synchronized digital robot twin on the user's computer desktop.
 
 ## 4. Users
 
 | User | Need |
 |---|---|
-| Student at a PC | Notice a hot or humid room without checking a dashboard |
-| Teacher / lab in-charge | Friendly ambient indicator of room conditions |
-| Project evaluators | Clear hardware-software integration they can see working |
+| Student at a PC | Immediate ambient awareness of hot, cold, or humid room conditions from their desktop robot |
+| Teacher / lab in-charge | Visible physical and digital robotic indicator of classroom or lab environmental comfort |
+| Project evaluators | Clear hardware-software integration featuring a physical IoT robot communicating with a desktop digital twin |
 
 ## 5. Scope
 
 ### In scope for MVP (v1)
 
-- ESP32 reads DHT temperature and humidity.
-- ESP32 serves latest readings as JSON over HTTP on the local Wi-Fi.
-- Electron app polls the ESP32 and validates data.
-- Transparent, frameless, always-on-top character window that walks across the real screen.
-- Character states driven by configurable thresholds.
-- Click, drag, sleep, jump interactions.
-- Sensor connection status and a small readings panel.
-- Settings: ESP32 address, poll interval, thresholds.
-- Mock sensor server for development without hardware.
-- Optional LDR (light) and sound sensor fields to reach four measured parameters for the EDI report.
+- **Physical Robot Node**:
+  - ESP32 reads DHT temperature and humidity.
+  - ESP32 serves latest readings as JSON over HTTP on the local Wi-Fi.
+  - Physical LED/beacon state machine indicating robot power, Wi-Fi link, and sensor status.
+  - Optional physical LDR (light) and sound sensor channels to provide up to 4 environmental telemetry dimensions.
+- **Digital Robot Twin**:
+  - Electron app polls the physical robot node and validates incoming telemetry.
+  - Transparent, frameless, always-on-top digital robot window that walks across the real screen.
+  - Digital robot states, expressions, and audio cues driven by configurable comfort thresholds.
+  - Click, drag, gravity drop, and sleeping interactions with physical landing bounce.
+  - Sensor connection status and readings panel displaying physical robot telemetry.
+  - Settings: Physical robot address (IP/mDNS), poll interval, comfort thresholds, audio volume.
+- **Development & Verification**:
+  - Mock sensor server simulating the physical robot node for rapid desktop development.
+  - Hardware simulation mode for offline interactive evaluation.
 
 ### Out of scope for MVP
 
@@ -94,12 +103,12 @@ IDs are used in commits and STATUS.md.
 
 ## 8. Acceptance criteria for MVP
 
-1. With the ESP32 powered and on the same Wi-Fi, readings appear in the app and update at the configured interval.
-2. Raising temperature above the high threshold (for example, warming the sensor) changes the character to the hot state within two poll intervals.
-3. Unplugging the ESP32 changes the character to the disconnected state within the timeout; reconnecting recovers automatically.
-4. The character walks across the real desktop over other applications and turns at the screen edges.
-5. Clicking the character reacts; dragging repositions it; clicking elsewhere on the transparent area reaches the app underneath.
-6. The same behaviours work against the mock server without hardware.
+1. With the physical ESP32 robot powered and on the same Wi-Fi, telemetry appears in the digital robot app and updates at the configured interval.
+2. Raising temperature above the high threshold (e.g. warming the physical robot sensor) changes the digital robot twin to the hot state within two poll intervals.
+3. Powering down or disconnecting the physical robot node changes the digital robot model to the disconnected state within the timeout; reconnecting recovers automatically.
+4. The digital robot model walks across the real desktop over other applications and turns at the screen edges.
+5. Clicking the digital robot reacts; dragging repositions it with physical gravity drop; clicking elsewhere on the transparent area reaches the app underneath.
+6. The same behaviours work against the mock sensor server without physical hardware connected.
 7. Every item above is recorded in STATUS.md only after it has actually been run.
 
 ## 9. Success metrics for the report
