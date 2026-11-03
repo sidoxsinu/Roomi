@@ -6,15 +6,18 @@ const { Walker } = require('./walker');
 const { SensorClient } = require('./sensorClient');
 const { resolveState } = require('./reactionEngine');
 const { SettingsManager } = require('./settings');
+const { PhysicsDropEngine } = require('./physics');
 
 let mainWindow = null;
 let settingsWindow = null;
 let tray = null;
 let walker = null;
+let physicsEngine = null;
 let sensorClient = null;
 let settingsManager = null;
 let currentSettings = null;
 let dragOriginWinPos = null;
+let dragPositions = [];
 
 // Sleep Inactivity State Management (APP-8)
 let sleepTimer = null;
@@ -253,6 +256,9 @@ function initApp() {
   });
   walker.start();
 
+  // Setup Physics Drop Engine for drag-and-drop gravity
+  physicsEngine = new PhysicsDropEngine();
+
   // Send persisted pet selection to renderer on load
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('character:pet', currentSettings.selectedPet);
@@ -303,12 +309,15 @@ function initApp() {
     }
   });
 
-  // Manual Drag Interactions (APP-7)
+  // Manual Drag Interactions with Real Physics & Gravity (APP-7)
   ipcMain.on('drag:start', () => {
     resetInactivity();
     if (!mainWindow || mainWindow.isDestroyed()) return;
+    if (physicsEngine) physicsEngine.stop();
     dragOriginWinPos = mainWindow.getPosition();
+    dragPositions = [{ time: Date.now(), pos: dragOriginWinPos }];
     if (walker) walker.pause('drag');
+    mainWindow.webContents.send('character:drag', { isDragging: true, isAirborne: true, vx: 0, vy: 0 });
   });
 
   ipcMain.on('drag:move', (_event, { dx, dy }) => {
@@ -317,6 +326,22 @@ function initApp() {
     const newX = Math.round(dragOriginWinPos[0] + dx);
     const newY = Math.round(dragOriginWinPos[1] + dy);
     mainWindow.setPosition(newX, newY);
+
+    const now = Date.now();
+    dragPositions.push({ time: now, pos: [newX, newY] });
+    if (dragPositions.length > 6) dragPositions.shift();
+
+    // Compute instantaneous velocity for tilt
+    let vx = 0;
+    let vy = 0;
+    if (dragPositions.length >= 2) {
+      const prev = dragPositions[0];
+      const dt = Math.max(0.01, (now - prev.time) / 1000);
+      vx = (newX - prev.pos[0]) / dt;
+      vy = (newY - prev.pos[1]) / dt;
+    }
+
+    mainWindow.webContents.send('character:drag', { isDragging: true, isAirborne: true, vx, vy });
   });
 
   ipcMain.on('drag:end', () => {
@@ -326,18 +351,54 @@ function initApp() {
     const workArea = screen.getPrimaryDisplay().workArea;
     const winSize = mainWindow.getSize();
 
-    // Snap Y back to bottom of workArea per spec
-    const snappedY = workArea.y + workArea.height - winSize[1];
+    const floorY = workArea.y + workArea.height - winSize[1];
     const minX = workArea.x;
     const maxX = workArea.x + workArea.width - winSize[0];
-    const clampedX = Math.max(minX, Math.min(maxX, currentPos[0]));
 
-    mainWindow.setPosition(clampedX, snappedY);
-    if (walker) {
-      walker.setPosition(clampedX, snappedY);
-      walker.resume('drag');
+    // Compute throw release velocity from drag history
+    let releaseVx = 0;
+    let releaseVy = 0;
+    const now = Date.now();
+    if (dragPositions.length >= 2) {
+      const oldest = dragPositions[0];
+      const dt = Math.max(0.02, (now - oldest.time) / 1000);
+      releaseVx = (currentPos[0] - oldest.pos[0]) / dt;
+      releaseVy = (currentPos[1] - oldest.pos[1]) / dt;
     }
+    dragPositions = [];
     dragOriginWinPos = null;
+
+    if (!physicsEngine) {
+      physicsEngine = new PhysicsDropEngine();
+    }
+
+    mainWindow.webContents.send('character:drag', { isDragging: false, isAirborne: currentPos[1] < floorY, vx: releaseVx, vy: releaseVy });
+
+    // Launch gravity drop simulation with momentum and elastic bounce!
+    physicsEngine.drop({
+      startX: currentPos[0],
+      startY: currentPos[1],
+      vx: releaseVx,
+      vy: releaseVy,
+      floorY,
+      bounds: { minX, maxX },
+      onStep: ({ x, y, vx, vy, isAirborne }) => {
+        if (!mainWindow || mainWindow.isDestroyed()) return;
+        mainWindow.setPosition(Math.round(x), Math.round(y));
+        mainWindow.webContents.send('character:physics', { x, y, vx, vy, isAirborne });
+      },
+      onBounce: ({ impactVelocity, type, final }) => {
+        if (!mainWindow || mainWindow.isDestroyed()) return;
+        mainWindow.webContents.send('character:land', { impactVelocity, type, final });
+      },
+      onRest: ({ x, y }) => {
+        if (!mainWindow || mainWindow.isDestroyed()) return;
+        if (walker) {
+          walker.setPosition(x, y);
+          walker.resume('drag');
+        }
+      }
+    });
   });
 
   // Click Interaction: jump reaction, wake up, and brief walker pause (APP-7, APP-8)

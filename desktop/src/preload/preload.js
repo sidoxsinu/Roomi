@@ -37,6 +37,21 @@ contextBridge.exposeInMainWorld('roomiApi', {
     ipcRenderer.on('settings:change', handler);
     return () => ipcRenderer.removeListener('settings:change', handler);
   },
+  onDragState: (callback) => {
+    const handler = (_event, data) => callback(data);
+    ipcRenderer.on('character:drag', handler);
+    return () => ipcRenderer.removeListener('character:drag', handler);
+  },
+  onPhysicsUpdate: (callback) => {
+    const handler = (_event, data) => callback(data);
+    ipcRenderer.on('character:physics', handler);
+    return () => ipcRenderer.removeListener('character:physics', handler);
+  },
+  onLand: (callback) => {
+    const handler = (_event, data) => callback(data);
+    ipcRenderer.on('character:land', handler);
+    return () => ipcRenderer.removeListener('character:land', handler);
+  },
 
   // Emitters from Renderer -> Main
   setHover: (isHovering) => ipcRenderer.send('hover:set', isHovering),
