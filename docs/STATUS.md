@@ -16,7 +16,7 @@ Last updated: 2026-11-03
 | ID | Requirement | Status | Evidence / notes |
 |---|---|---|---|
 | FW-1 | Read DHT | Written, not flashed | DHT read skeleton to Serial (2026-11-03) |
-| FW-2 | Wi-Fi + reconnect | Planned | |
+| FW-2 | Wi-Fi + reconnect | Written, not flashed | Non-blocking reconnect loop implemented (2026-11-03) |
 | FW-3 | GET /data | Planned | |
 | FW-4 | Error status, no fake values | Written, not flashed | Reports error on isnan(), never sends fabricated numbers (2026-11-03) |
 | FW-5 | GET /health | Planned | |
