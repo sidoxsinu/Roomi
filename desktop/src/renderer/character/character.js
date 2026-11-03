@@ -208,6 +208,7 @@ class Character {
     this.shiverLines.style.display = 'none';
     this.discMark.style.display = 'none';
     this.eyesGroup.style.display = 'block';
+    this.eyesGroup.style.transform = 'scaleY(1)';
     this.eyesSleeping.style.display = 'none';
     this.eyesCold.style.display = 'none';
     this.hideAllMouths();
@@ -234,10 +235,14 @@ class Character {
         break;
       case 'humid':
         this.blob.setAttribute('fill', 'url(#bodyGradHumid)');
+        this.eyesGroup.style.transform = 'scaleY(0.75)';
+        this.eyesGroup.style.transformOrigin = '80px 82px';
         this.mouthHumid.style.display = 'block';
         break;
       case 'dry':
         this.blob.setAttribute('fill', 'url(#bodyGradDry)');
+        this.eyesGroup.style.transform = 'scaleY(0.85)';
+        this.eyesGroup.style.transformOrigin = '80px 82px';
         this.mouthDry.style.display = 'block';
         break;
       case 'disconnected':
