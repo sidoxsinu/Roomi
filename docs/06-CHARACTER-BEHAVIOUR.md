@@ -1,13 +1,19 @@
-# Character and Behaviour Spec
+# Robotic Companion Behaviour Specification
 
-## Art rules
+ROOMI's primary desktop entity is **`Robo-Node` (The Digital Robot Twin)**. It mirrors the physical desk robot's environmental monitoring state through dynamic pixel visor expressions, status antenna pulses, procedural audio bleeps, and synchronized reactions.
 
-- Original character designed for this project. No copyrighted characters, no third-party sprites unless licence is documented in docs.
-- Build as layered SVG with CSS classes per state (eyes, mouth, sweat drops, shiver, cheeks, fan), or sprite sheets if the team supplies art. Prefer SVG so states are small and crisp.
-- Cute and readable at about 120-160 px. Facing direction by horizontal flip.
-- Suggested concept: small round "room spirit" blob with big eyes and tiny feet. Team may change it; keep the state names below stable.
+## 1. Robotic Art & Design Rules
 
-## States
+- **Design Concept**: Cybernetic retro-futuristic desktop automaton (`Robo-Node`). Features a rounded CRT-style head chassis, dual pixel visor eyes, and a glowing top status antenna LED.
+- **Synchronized Dual Expression**:
+  - The digital robot's pixel visor and antenna pulse mirror the physical robot's hardware beacon:
+    - Normal Comfort: Steady green beacon on physical robot $\leftrightarrow$ cheerful cyan visor on digital twin.
+    - Alert / Thermal Warning: Flashing indicator $\leftrightarrow$ amber/orange overheating visor.
+    - Disconnected / Fault: Rapid blink $\leftrightarrow$ white-noise glitch static visor with question mark.
+- **Multi-Model Support**: While `Robo-Node` is the default Digital Robot Twin, users can also choose alternative companion skins (`blob`, `cat`, `penguin`).
+- **Vector Fidelity**: Pure SVG vector art with GPU-accelerated CSS animations.
+
+## 2. Robotic Reaction States
 
 | State | Trigger (default) | Look and behaviour |
 |---|---|---|

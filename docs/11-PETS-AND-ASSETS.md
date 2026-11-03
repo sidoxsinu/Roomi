@@ -1,6 +1,6 @@
-# 11. Pets and Visual Assets Specification
+# 11. Robotic Models and Visual Assets Specification
 
-This document details the multi-pet companion system introduced to provide animation-rich, open-source desktop companions for ROOMI.
+This document details the robotic companion models and visual assets designed for ROOMI. The flagship model is **`Robo-Node` (The Digital Robot Twin)**, accompanied by alternative companion skins.
 
 ---
 
@@ -9,23 +9,24 @@ This document details the multi-pet companion system introduced to provide anima
 The desktop companion character is rendered as responsive vector SVG elements dynamically inserted into `#pet-container` within `desktop/src/renderer/index.html`. 
 
 ### Key Design Goals:
-1. **Crisp High-DPI Rendering**: SVGs maintain perfect fidelity on 100%, 125%, 150%, and Retina 200%+ display scaling across Windows, macOS, and Linux without pixelation.
-2. **Hardware-Accelerated CSS Animations**: Continuous idle animations (breathing, ear twitches, tail swaying, flipper flapping, antenna pulses) run on the GPU via CSS `transform` and `opacity` keyframes with sub-1% idle CPU utilization.
-3. **Power Efficiency (T10.2)**: All continuous keyframe animations inherit the `.paused-anim` class whenever the pet window is hidden, freezing CSS recalculations.
-4. **Zero-Latency Live Hot-Swapping**: Selecting a companion in the Settings window broadcasts an IPC event (`character:pet`) that re-renders the active pet structure instantly without requiring an app restart.
+1. **Robotic Digital Twin Fidelity**: `Robo-Node` visually mirrors the telemetry and health status of the Physical Robot Node on the user's desk.
+2. **Crisp High-DPI Rendering**: SVGs maintain perfect fidelity on 100%, 125%, 150%, and Retina 200%+ display scaling across Windows, macOS, and Linux without pixelation.
+3. **Hardware-Accelerated CSS Animations**: Continuous idle animations (antenna beacon pulses, visor blinks, breathing, ear twitches, flipper flaps) run on the GPU via CSS `transform` and `opacity` keyframes with sub-1% idle CPU utilization.
+4. **Power Efficiency (T10.2)**: All continuous keyframe animations inherit the `.paused-anim` class whenever the window is hidden, freezing CSS recalculations.
+5. **Zero-Latency Live Hot-Swapping**: Selecting a companion in the Settings window broadcasts an IPC event (`character:pet`) that re-renders the active model structure instantly without requiring an app restart.
 
 ---
 
 ## 2. Companion Catalog
 
-ROOMI ships with four distinct, animation-rich open-source companions:
+ROOMI ships with `Robo-Node` as the primary digital twin, plus three expressive companion skins:
 
 | Companion ID | Display Name | Archetype | Visual Characteristics | Key Animations |
 |---|---|---|---|---|
+| `robot` **(Primary)** | Robo-Node | Cybernetic Automaton / Digital Twin | Retro CRT rounded monitor chassis, glowing top antenna with status LED, dual pixel visor eyes. | Antenna pulse glow (`robot-antenna-glow`), eye visor scanline blink (`robot-eye-blink`), hover float bobbing. |
 | `blob` | Roomi Spirit | Ambient Elemental | Emerald rounded slime body, floating highlight droplet, blush cheeks, expressive round eyes. | Gentle body squash-stretch breathing (`blob-idle-breathe`), shiver in cold, heavy sag in hot. |
 | `cat` | Mochi Neko | Feline Companion | Calico/Cream kitten with pointed inner-pink ears, whisker pads, curved tail, paw pads. | Dynamic tail sway (`cat-tail-sway`), independent ear twitches (`cat-ear-twitch-left`, `cat-ear-twitch-right`), rhythmic purr breathing. |
 | `penguin` | Pengu | Arctic Bird | Indigo/white tuxedo plumage, golden beak, webbed feet, curved flippers. | Wing/flipper flapping (`penguin-wing-flap-left`, `wing-flap-right`), waddle body tilt (`penguin-body-waddle`), head bob. |
-| `robot` | Robo-Node | Cybernetic Automaton | Retro CRT rounded monitor chassis, glowing top antenna with status LED, dual pixel visor eyes. | Antenna pulse glow (`robot-antenna-glow`), eye visor scanline blink (`robot-eye-blink`), hover float bobbing. |
 
 ---
 

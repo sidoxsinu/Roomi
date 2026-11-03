@@ -2,6 +2,9 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-04 | docs | update specifications and dev guides to robot-focused digital twin | APP-1, APP-5, APP-8
+- 2026-11-04 | docs(arch) | document physical robot node and digital twin architecture | ARCH, HW-1, FW-1
+- 2026-11-04 | docs(prd) | redefine scope to two-part physical robot and digital twin | PRD
 - 2026-11-04 | fix(desktop) | add ceiling bounce and guard setPosition against non-finite values | APP-2, APP-7
 - 2026-11-03 | docs | document open-source animation, physics, and audio libraries | APP-1, APP-5, APP-7
 - 2026-11-03 | feat(character) | add airborne drag tilt, landing squash, and impact sounds | APP-5, APP-7
