@@ -2,7 +2,7 @@
 
 Agent: update this file in every commit that changes status. Allowed statuses: Planned, In progress, Written (not run), Implemented (mock-tested), Implemented (hardware-tested), Blocked. Add a date and a one-line evidence note (what was actually run). Never mark hardware-tested without the student confirming a real run.
 
-Last updated: (not yet started)
+Last updated: 2026-11-03
 
 ## Hardware facts (fill when confirmed by the student)
 
@@ -41,9 +41,9 @@ Last updated: (not yet started)
 
 ## Milestones
 
-| Milestone | Status |
-|---|---|
-| M0 Repo bootstrap | Planned |
+| Milestone | Status | Notes |
+|---|---|---|
+| M0 Repo bootstrap | Implemented | Initialised git, .gitignore, docs set, skeleton created (2026-11-03) |
 | M1 Mock server | Planned |
 | M2 Firmware sensor | Planned |
 | M3 Firmware networking | Planned |
