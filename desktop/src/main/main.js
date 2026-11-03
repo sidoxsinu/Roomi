@@ -253,6 +253,17 @@ function initApp() {
   });
   walker.start();
 
+  // Performance: pause walker and animations when hidden (T10.2)
+  mainWindow.on('hide', () => {
+    if (walker) walker.pause('hidden');
+    mainWindow.webContents.send('app:visibility', false);
+  });
+
+  mainWindow.on('show', () => {
+    if (walker) walker.resume('hidden');
+    mainWindow.webContents.send('app:visibility', true);
+  });
+
   // Setup Sensor Client (APP-3, APP-4)
   sensorClient = new SensorClient({
     host: process.env.ROOMI_HOST || currentSettings.host,

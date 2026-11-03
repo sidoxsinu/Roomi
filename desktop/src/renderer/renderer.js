@@ -149,6 +149,15 @@ window.addEventListener('DOMContentLoaded', () => {
       character.setDirection(dir, walking);
     });
 
+    // Performance: Pause CSS animations when window is hidden (T10.2)
+    window.roomiApi.onVisibilityChange((isVisible) => {
+      if (isVisible) {
+        document.body.classList.remove('paused-anim');
+      } else {
+        document.body.classList.add('paused-anim');
+      }
+    });
+
     // Listen to character state updates (APP-5)
     let previousState = 'happy';
     window.roomiApi.onCharacterState(({ state, reasons }) => {

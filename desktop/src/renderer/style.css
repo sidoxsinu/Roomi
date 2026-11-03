@@ -145,6 +145,14 @@ html, body {
   transform: translateY(4px);
 }
 
+/* Paused Animation State for Low CPU (T10.2) */
+.paused-anim *,
+.paused-anim #character,
+.paused-anim .foot,
+.paused-anim .zzz-text {
+  animation-play-state: paused !important;
+}
+
 /* Character Container */
 #character {
   display: flex;

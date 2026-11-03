@@ -22,6 +22,11 @@ contextBridge.exposeInMainWorld('roomiApi', {
     ipcRenderer.on('walker:direction', handler);
     return () => ipcRenderer.removeListener('walker:direction', handler);
   },
+  onVisibilityChange: (callback) => {
+    const handler = (_event, isVisible) => callback(isVisible);
+    ipcRenderer.on('app:visibility', handler);
+    return () => ipcRenderer.removeListener('app:visibility', handler);
+  },
 
   // Emitters from Renderer -> Main
   setHover: (isHovering) => ipcRenderer.send('hover:set', isHovering),

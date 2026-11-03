@@ -136,7 +136,7 @@ class Walker {
     const dt = Math.min((now - this.lastTickTime) / 1000, 0.1);
     this.lastTickTime = now;
 
-    if (this.isPaused || !this.isWalking || !this.window || this.window.isDestroyed()) {
+    if (this.isPaused || !this.isWalking || !this.window || this.window.isDestroyed() || !this.window.isVisible()) {
       return;
     }
 
