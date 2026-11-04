@@ -24,7 +24,7 @@ Tagline: Your room, your robotic digital twin.
 
 ## Project facts
 
-- Institution: Christ College of Engineering (Autonomous), Dept. of Electrical and Electronics Engineering
+- Institution: Christ College of Engineering (Autonomous), Dept. of Computer Science and Engineering
 - Course context: Engineering Design and Innovation Studio, academic year 2026-2027
 - Team: Muhammed Sinan M, Jesphin Sabu, Josweena Jose
 - Guide: Biya Bijoy
