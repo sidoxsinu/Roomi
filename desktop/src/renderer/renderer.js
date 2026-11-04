@@ -48,14 +48,14 @@ window.addEventListener('DOMContentLoaded', () => {
   let speechHideTimer = null;
 
   const SPEECH_MESSAGES = {
-    happy: ["Feeling comfortable! ☀️", "Nice room conditions! ✨", "All good here! 😊"],
-    hot: ["It's toasty in here! 🌡️", "A bit warm today! ☀️", "Fanning myself! ♨️"],
-    cold: ["Brrr... chilly! ❄️", "A little cold in here! 🧤", "Shivering a bit! 🧊"],
-    humid: ["Feels muggy! 💧", "A bit sticky in here! 🌧️"],
-    dry: ["Air feels dry! 🥤", "Could use a sip of water! 🏜️"],
-    disconnected: ["Searching for sensor... ❓", "Where's the ESP32? 📡"],
-    sleeping: ["Zzz... 🌙", "Taking a catnap... 💤"],
-    click: ["Wheee! ✨", "Hi there! 👋", "Bouncy bounce! 🎈"]
+    happy: ["Robotic telemetry nominal! 🤖", "Ambient conditions optimal! ✨", "Digital twin synchronized! ⚡"],
+    hot: ["Thermal alert on physical robot! 🌡️", "Overheating warning! ♨️", "Cooling vents engaged! ☀️"],
+    cold: ["Low temperature alert! ❄️", "Sub-optimal operating climate! 🧤", "Thermal protection active! 🧊"],
+    humid: ["Moisture threshold exceeded! 💧", "High humidity detected! 🌧️"],
+    dry: ["Arid atmosphere detected! 🏜️", "Static electricity warning! ⚡"],
+    disconnected: ["Searching for Physical Robot... 📡", "Waiting for ESP32 beacon... ❓"],
+    sleeping: ["Low-power standby mode... 💤", "Power saving cycle active... 🌙"],
+    click: ["Beep boop! 🤖", "Digital twin active! ⚡", "Telemetry synced with physical robot! 📡"]
   };
 
   function showSpeech(text, durationMs = 3500) {
@@ -77,21 +77,22 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   function triggerStateSpeech(state) {
-    const petId = character.currentPetId || 'blob';
+    const petId = character.currentPetId || 'robot';
     let msg = '';
 
     if (state === 'click') {
-      if (petId === 'cat') {
+      if (petId === 'robot') {
+        const botMsgs = ['Beep boop! 🤖', 'Diagnostics: Optimal! ⚡', 'Ping acknowledged! 📡', 'Physical robot twin online! ⚙️'];
+        msg = botMsgs[Math.floor(Math.random() * botMsgs.length)];
+      } else if (petId === 'cat') {
         const catMsgs = ['Purrrrr! ✨', 'Meow! 🐾', 'Head bumps! 🐱'];
         msg = catMsgs[Math.floor(Math.random() * catMsgs.length)];
       } else if (petId === 'penguin') {
         const penguMsgs = ['Noot noot! 🐧', 'Waddle waddle! ❄️', 'Flipper wave! ✨'];
         msg = penguMsgs[Math.floor(Math.random() * penguMsgs.length)];
-      } else if (petId === 'robot') {
-        const botMsgs = ['Beep boop! 🤖', 'Diagnostics: Optimal! ⚡', 'Ping received! 📡'];
-        msg = botMsgs[Math.floor(Math.random() * botMsgs.length)];
       } else {
-        msg = SPEECH_MESSAGES.click[Math.floor(Math.random() * SPEECH_MESSAGES.click.length)];
+        const blobMsgs = ['Wheee! ✨', 'Hi there! 👋', 'Bouncy bounce! 🎈'];
+        msg = blobMsgs[Math.floor(Math.random() * blobMsgs.length)];
       }
     } else {
       const list = SPEECH_MESSAGES[state] || SPEECH_MESSAGES.happy;
@@ -218,12 +219,13 @@ window.addEventListener('DOMContentLoaded', () => {
     // Load initial pet and sound preferences from persisted settings
     window.roomiApi.getSettings().then((settings) => {
       if (settings) {
-        if (settings.selectedPet) character.setPet(settings.selectedPet);
+        const pet = settings.selectedPet || 'robot';
+        character.setPet(pet);
         if (soundFx) {
           soundFx.updateSettings({
             enabled: settings.soundEnabled,
             volume: settings.soundVolume,
-            pet: settings.selectedPet
+            pet
           });
         }
       }

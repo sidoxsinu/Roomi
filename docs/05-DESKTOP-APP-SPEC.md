@@ -1,8 +1,12 @@
-# Desktop App Specification (Electron)
+# Digital Robot Twin Desktop Specification (Electron)
 
-Tooling: Node LTS, Electron (current stable), electron-builder later for packaging. Plain HTML/CSS/JS. Dev scripts: `npm start`, `npm run start:sim`, `npm test`.
+Part 2 of ROOMI: **The Digital Robot Twin**.
 
-## Main window (character window)
+Tooling: Node LTS, Electron (current stable), open-source physics and audio engines. Plain HTML/CSS/JS. Dev scripts: `npm start`, `npm run start:sim`, `npm test`.
+
+The desktop app renders the interactive Digital Robot Twin companion, which synchronizes over local Wi-Fi with the Physical Robot Node.
+
+## Main Window (Digital Robot Window)
 
 Create a small BrowserWindow (about 200x220 px) with:
 

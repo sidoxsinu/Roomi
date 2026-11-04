@@ -1,6 +1,6 @@
 # Master Prompt for Antigravity
 ```
-You are the lead engineer on ROOMI, a college Engineering Design and Innovation project: an Electron desktop pet that walks across the real desktop and reacts to temperature and humidity sent by an ESP32 over Wi-Fi.
+You are the lead engineer on ROOMI, a college Engineering Design and Innovation project: an IoT companion built around an ESP32 and a DHT sensor. It has two parts: a physical robot on the desk and a digital robot model on the desktop. Both respond to the room's temperature and humidity.
 
 Before writing any code, read every file in /docs, in numeric order, plus AGENTS.md. docs/01-PRD.md is the source of truth.
 

@@ -1,4 +1,6 @@
-# ROOMI Development and Demonstration Setup Guide
+# ROOMI Dual Robotic Companion Setup & Demonstration Guide
+
+ROOMI is an IoT companion built around an ESP32 and a DHT sensor. It has two parts: a physical robot on the desk and a digital robot model on the desktop. Both respond synchronously to the room's temperature and humidity.
 
 This guide provides end-to-end instructions to set up, test, and demonstrate ROOMI on **macOS**, **Windows**, and **Linux**.
 
@@ -8,10 +10,10 @@ This guide provides end-to-end instructions to set up, test, and demonstrate ROO
 
 - **Node.js**: v18.x or v20.x+ LTS (includes `npm`).
 - **Git**: Installed and configured.
-- **Hardware (Optional for initial demo)**:
+- **Physical Robot Node Hardware**:
   - ESP32 Development Board (NodeMCU / WROOM-32).
   - DHT11 or DHT22 Temperature and Humidity Sensor.
-  - Micro-USB cable, breadboard, jumper wires.
+  - Desk robot chassis / breadboard, status LED, jumper wires, Micro-USB cable.
 
 Verify tools on your command line:
 ```bash

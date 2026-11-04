@@ -17,10 +17,10 @@ const DEFAULT_SETTINGS = {
   soundEnabled: true,
   soundVolume: 70,
   simulation: false,
-  selectedPet: 'blob'
+  selectedPet: 'robot'
 };
 
-const ALLOWED_PETS = ['blob', 'cat', 'penguin', 'robot'];
+const ALLOWED_PETS = ['robot', 'blob', 'cat', 'penguin'];
 
 /**
  * Validates and merges partial settings with defaults.

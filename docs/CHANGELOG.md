@@ -6,6 +6,11 @@ Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY
 - 2026-11-04 | fix(desktop) | continuously keep pet visible and connect demo sensor | APP-1, APP-3, APP-11
 - 2026-11-04 | fix(desktop) | keep pet window topmost and show readings panel | APP-1, APP-6
 - 2026-11-04 | fix(desktop) | use the character window display for movement bounds | APP-2, APP-7
+- 2026-11-04 | feat(firmware) | integrate 4-servo quadruped walking locomotion on freertos core 1 | FW-9, HW-1
+- 2026-11-04 | feat(desktop) | set robot digital twin as default companion and update ui framing | APP-5, APP-9, APP-14
+- 2026-11-04 | docs | update specifications and dev guides to robot-focused digital twin | APP-1, APP-5, APP-8
+- 2026-11-04 | docs(arch) | document physical robot node and digital twin architecture | ARCH, HW-1, FW-1
+- 2026-11-04 | docs(prd) | redefine scope to two-part physical robot and digital twin | PRD
 - 2026-11-04 | fix(desktop) | add ceiling bounce and guard setPosition against non-finite values | APP-2, APP-7
 - 2026-11-03 | docs | document open-source animation, physics, and audio libraries | APP-1, APP-5, APP-7
 - 2026-11-03 | feat(character) | add airborne drag tilt, landing squash, and impact sounds | APP-5, APP-7
