@@ -28,11 +28,11 @@ Last updated: 2026-11-04
 | APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker strictly clamped to integer pixel screen borders (Math.ceil/Math.floor) across Windows DPI scaling and multi-monitor display changes (2026-11-04) |
 | APP-3 | Poll ESP32 | Implemented (mock-tested) | Polling the physical robot node with AbortController timeout verified against mock server on localhost:8080 (2026-11-04) |
 | APP-4 | Validate and detect disconnect | Implemented (mock-tested) | Strict shape/range validation and disconnect detection verified (2026-11-03) |
-| APP-5 | Threshold-driven states | Implemented (mock-tested) | Priority/hysteresis reaction engine; Robo-Node digital twin, companion models, and state audio synthesized (2026-11-04) |
+| APP-5 | Threshold-driven states | Implemented (mock-tested) | Priority/hysteresis reaction engine; Cat ("Mochi Neko") default look, companion models, and state audio synthesized (2026-11-04) |
 | APP-6 | Readings panel | Implemented (mock-tested) | Readings panel is visible on startup and shows live physical robot telemetry; unavailable readings remain `--` (2026-11-04) |
 | APP-7 | Click and drag | Implemented (mock-tested) | Pointer capture prevents lost drag events on Windows; drop physics strictly bounded within screen borders and safe floor (2026-11-04) |
 | APP-8 | Idle and sleep | Implemented (mock-tested) | Robot idle blinks and sleep standby mode with procedural audio wired (2026-11-04) |
-| APP-9 | Settings window | Implemented (mock-tested) | Settings window with Robo-Node digital twin default, model selector, audio controls, and disclaimer verified (2026-11-04) |
+| APP-9 | Settings window | Implemented (mock-tested) | Settings window with Cat ("Mochi Neko") default look, model selector, audio controls, and disclaimer verified (2026-11-04) |
 | APP-10 | Click-through | Implemented (mock-tested) | Forwarded mousemove hover toggling implemented (2026-11-03) |
 | APP-11 | Tray / menu-bar | Implemented (mock-tested) | Tray restores/focuses ROOMI without offering a hide action; Quit remains available (2026-11-04) |
 | APP-12 | Simulation mode | Implemented (mock-tested) | Simulation mode with sliders and SIMULATION badge verified (2026-11-03) |

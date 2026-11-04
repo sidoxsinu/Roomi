@@ -107,7 +107,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   btnPreviewPet.addEventListener('click', () => {
     if (previewSoundEngine) {
       const selectedPetRadio = document.querySelector('input[name="selectedPet"]:checked');
-      const pet = selectedPetRadio ? selectedPetRadio.value : 'robot';
+      const pet = selectedPetRadio ? selectedPetRadio.value : 'cat';
       previewSoundEngine.updateSettings({
         enabled: soundEnabledInput.checked,
         volume: parseInt(soundVolumeInput.value, 10),
@@ -132,7 +132,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     try {
       const current = await window.roomiApi.getSettings();
       if (current) {
-        const activePet = current.selectedPet || 'robot';
+        const activePet = current.selectedPet || 'cat';
         const petRadio = document.querySelector(`input[name="selectedPet"][value="${activePet}"]`);
         if (petRadio) petRadio.checked = true;
         hostInput.value = current.host || 'roomi.local';
@@ -166,7 +166,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     e.preventDefault();
 
     const selectedPetRadio = document.querySelector('input[name="selectedPet"]:checked');
-    const selectedPet = selectedPetRadio ? selectedPetRadio.value : 'robot';
+    const selectedPet = selectedPetRadio ? selectedPetRadio.value : 'cat';
 
     const newSettings = {
       selectedPet,

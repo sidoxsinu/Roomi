@@ -43,7 +43,7 @@ describe('Settings Validation & Merging (APP-9, APP-14)', () => {
   });
 
   it('validates selectedPet and falls back to default on invalid pet name', () => {
-    assert.strictEqual(DEFAULT_SETTINGS.selectedPet, 'robot');
+    assert.strictEqual(DEFAULT_SETTINGS.selectedPet, 'cat');
 
     const valid = validateAndMergeSettings({ selectedPet: 'cat' });
     assert.strictEqual(valid.selectedPet, 'cat');
@@ -58,7 +58,7 @@ describe('Settings Validation & Merging (APP-9, APP-14)', () => {
     assert.strictEqual(robot.selectedPet, 'robot');
 
     const invalid = validateAndMergeSettings({ selectedPet: 'dinosaur' });
-    assert.strictEqual(invalid.selectedPet, 'robot');
+    assert.strictEqual(invalid.selectedPet, 'cat');
   });
 
   it('validates soundEnabled and soundVolume boundaries', () => {

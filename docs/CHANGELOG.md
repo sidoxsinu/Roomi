@@ -2,6 +2,7 @@
 
 Newest first. One entry per commit that changes behaviour or docs. Format: `YYYY-MM-DD | type(scope) | summary | requirement IDs`.
 
+- 2026-11-04 | feat(desktop) | set cat (Mochi Neko) as default companion look | APP-5, APP-9, APP-14
 - 2026-11-04 | docs | update project institution department to computer science and engineering | DOCS
 - 2026-11-04 | fix(windows) | enforce strict screen borders, pointer capture, and multi-monitor bounds | APP-1, APP-2, APP-7
 - 2026-11-04 | fix(desktop) | clamp pet movement inside display barrier and announce visibility | APP-2, APP-7

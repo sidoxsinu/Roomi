@@ -17,7 +17,7 @@ const DEFAULT_SETTINGS = {
   soundEnabled: true,
   soundVolume: 70,
   simulation: false,
-  selectedPet: 'robot'
+  selectedPet: 'cat'
 };
 
 const ALLOWED_PETS = ['robot', 'blob', 'cat', 'penguin'];

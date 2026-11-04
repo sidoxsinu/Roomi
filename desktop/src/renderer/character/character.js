@@ -1,7 +1,7 @@
 // ROOMI Character Manager supporting multiple selectable pets
 
 class Character {
-  constructor(containerEl, petId = 'blob') {
+  constructor(containerEl, petId = 'cat') {
     this.container = containerEl;
     this.currentPetId = petId;
     this.currentState = 'happy';
@@ -15,7 +15,7 @@ class Character {
   render() {
     const petDef = (typeof PETS !== 'undefined' && PETS[this.currentPetId])
       ? PETS[this.currentPetId]
-      : (typeof PETS !== 'undefined' ? PETS.blob : null);
+      : (typeof PETS !== 'undefined' ? PETS.cat : null);
 
     if (petDef) {
       this.container.innerHTML = petDef.svg;

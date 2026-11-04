@@ -16,7 +16,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const panelReasons = document.getElementById('panel-reasons');
   const panelSimBadge = document.getElementById('panel-sim-badge');
 
-  const character = new Character(characterTarget);
+  const character = new Character(characterTarget, 'cat');
   const soundFx = typeof SoundFxEngine !== 'undefined' ? new SoundFxEngine() : null;
 
   setTimeout(() => {
@@ -77,7 +77,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   function triggerStateSpeech(state) {
-    const petId = character.currentPetId || 'robot';
+    const petId = character.currentPetId || 'cat';
     let msg = '';
 
     if (state === 'click') {
@@ -256,7 +256,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // Load initial pet and sound preferences from persisted settings
     window.roomiApi.getSettings().then((settings) => {
       if (settings) {
-        const pet = settings.selectedPet || 'robot';
+        const pet = settings.selectedPet || 'cat';
         character.setPet(pet);
         if (soundFx) {
           soundFx.updateSettings({
