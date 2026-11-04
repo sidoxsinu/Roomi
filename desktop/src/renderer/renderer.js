@@ -115,8 +115,10 @@ window.addEventListener('DOMContentLoaded', () => {
     }, ms);
   }
 
-  // Robust forwarded-event hover detection (APP-10)
-  window.addEventListener('mousemove', (event) => {
+  // Robust forwarded-event hover detection (APP-10) and captured dragging (APP-7)
+  let activePointerId = null;
+
+  function onPointerOrMouseMove(event) {
     if (isDragging) {
       const dx = event.screenX - dragStartX;
       const dy = event.screenY - dragStartY;
@@ -145,7 +147,10 @@ window.addEventListener('DOMContentLoaded', () => {
         window.roomiApi.setHover(false);
       }
     }
-  });
+  }
+
+  window.addEventListener('mousemove', onPointerOrMouseMove);
+  window.addEventListener('pointermove', onPointerOrMouseMove);
 
   document.addEventListener('mouseleave', () => {
     if (isHovering && !isDragging) {
@@ -157,9 +162,27 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Manual Drag and Click Interaction (APP-7)
-  characterTarget.addEventListener('mousedown', (event) => {
+  // Manual Drag and Click Interaction with Pointer Capture for Windows (APP-7)
+  characterTarget.addEventListener('pointerdown', (event) => {
     if (event.button !== 0) return; // Left click only
+    isDragging = true;
+    hasDragged = false;
+    dragStartX = event.screenX;
+    dragStartY = event.screenY;
+    activePointerId = event.pointerId;
+
+    try {
+      characterTarget.setPointerCapture(event.pointerId);
+    } catch (_) {}
+
+    if (window.roomiApi) {
+      window.roomiApi.dragStart();
+    }
+  });
+
+  // Fallback for mousedown in case pointer events are not dispatched
+  characterTarget.addEventListener('mousedown', (event) => {
+    if (event.button !== 0 || isDragging) return;
     isDragging = true;
     hasDragged = false;
     dragStartX = event.screenX;
@@ -170,9 +193,16 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  window.addEventListener('mouseup', () => {
+  function handleDragEnd(event) {
     if (!isDragging) return;
     isDragging = false;
+
+    if (activePointerId !== null) {
+      try {
+        characterTarget.releasePointerCapture(activePointerId);
+      } catch (_) {}
+      activePointerId = null;
+    }
 
     if (window.roomiApi) {
       window.roomiApi.dragEnd();
@@ -192,6 +222,13 @@ window.addEventListener('DOMContentLoaded', () => {
         window.roomiApi.interactClick();
       }
     }
+  }
+
+  window.addEventListener('pointerup', handleDragEnd);
+  window.addEventListener('pointercancel', handleDragEnd);
+  window.addEventListener('mouseup', handleDragEnd);
+  window.addEventListener('blur', () => {
+    if (isDragging) handleDragEnd();
   });
 
   if (window.roomiApi) {

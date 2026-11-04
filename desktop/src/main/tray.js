@@ -10,6 +10,17 @@ function setupTray(mainWindow, options = {}) {
   tray = new Tray(icon);
   tray.setToolTip('ROOMI - Desktop Pet');
 
+  function bringWindowToTop() {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    mainWindow.showInactive();
+    if (process.platform === 'darwin') {
+      mainWindow.setAlwaysOnTop(true, 'screen-saver');
+      if (typeof mainWindow.moveTop === 'function') mainWindow.moveTop();
+    } else {
+      mainWindow.setAlwaysOnTop(true);
+    }
+  }
+
   function updateMenu() {
     const isVisible = mainWindow && !mainWindow.isDestroyed() && mainWindow.isVisible();
 
@@ -17,10 +28,7 @@ function setupTray(mainWindow, options = {}) {
       {
         label: 'Show ROOMI',
         click: () => {
-          if (!mainWindow || mainWindow.isDestroyed()) return;
-          mainWindow.showInactive();
-          mainWindow.setAlwaysOnTop(true, 'screen-saver');
-          if (typeof mainWindow.moveTop === 'function') mainWindow.moveTop();
+          bringWindowToTop();
           updateMenu();
         }
       },
@@ -54,10 +62,7 @@ function setupTray(mainWindow, options = {}) {
   }
 
   tray.on('click', () => {
-    if (!mainWindow || mainWindow.isDestroyed()) return;
-    mainWindow.showInactive();
-    mainWindow.setAlwaysOnTop(true, 'screen-saver');
-    if (typeof mainWindow.moveTop === 'function') mainWindow.moveTop();
+    bringWindowToTop();
     updateMenu();
   });
 

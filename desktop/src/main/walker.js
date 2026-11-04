@@ -5,9 +5,9 @@ const { screen } = require('electron');
  * Exported for unit testing without Electron runtime.
  */
 function stepWalker({ x, y, dir, speedPxPerSec, dtSec, workArea, windowWidth, windowHeight }) {
-  const minX = workArea.x;
-  const maxX = workArea.x + workArea.width - windowWidth;
-  const targetY = workArea.y + workArea.height - windowHeight;
+  const minX = Math.ceil(workArea.x);
+  const maxX = Math.floor(workArea.x + workArea.width - windowWidth);
+  const targetY = Math.floor(workArea.y + workArea.height - windowHeight);
 
   let nextDir = dir;
   let nextX = x + (dir === 'right' ? 1 : -1) * speedPxPerSec * dtSec;
@@ -20,6 +20,9 @@ function stepWalker({ x, y, dir, speedPxPerSec, dtSec, workArea, windowWidth, wi
     nextDir = 'right';
   }
 
+  // Strict clamp ensures coordinates strictly obey screen borders
+  nextX = Math.max(minX, Math.min(maxX, nextX));
+
   return {
     x: nextX,
     y: targetY,
@@ -29,14 +32,17 @@ function stepWalker({ x, y, dir, speedPxPerSec, dtSec, workArea, windowWidth, wi
 }
 
 function clampToWorkArea({ x, y, workArea, windowWidth, windowHeight }) {
-  const minX = workArea.x;
-  const maxX = workArea.x + workArea.width - windowWidth;
-  const minY = workArea.y;
-  const maxY = workArea.y + workArea.height - windowHeight;
+  const minX = Math.ceil(workArea.x);
+  const maxX = Math.floor(workArea.x + workArea.width - windowWidth);
+  const minY = Math.ceil(workArea.y);
+  const maxY = Math.floor(workArea.y + workArea.height - windowHeight);
+
+  const safeX = Number.isFinite(x) ? Math.round(x) : minX;
+  const safeY = Number.isFinite(y) ? Math.round(y) : maxY;
 
   return {
-    x: Math.max(minX, Math.min(maxX, Number.isFinite(x) ? x : minX)),
-    y: Math.max(minY, Math.min(maxY, Number.isFinite(y) ? y : maxY))
+    x: Math.max(minX, Math.min(maxX, safeX)),
+    y: Math.max(minY, Math.min(maxY, safeY))
   };
 }
 
@@ -59,14 +65,24 @@ class Walker {
 
     const workArea = this.getWorkArea();
     const [initX, initY] = this.window.getPosition();
-    this.x = initX;
-    this.y = workArea.y + workArea.height - this.windowHeight;
+    const clamped = clampToWorkArea({
+      x: initX,
+      y: workArea.y + workArea.height - this.windowHeight,
+      workArea,
+      windowWidth: this.windowWidth,
+      windowHeight: this.windowHeight
+    });
+    this.x = clamped.x;
+    this.y = clamped.y;
     this.window.setPosition(Math.round(this.x), Math.round(this.y));
 
-    // Handle screen resolution changes
-    screen.on('display-metrics-changed', () => {
+    // Handle screen resolution changes and multi-monitor additions/removals
+    this.onDisplayChange = () => {
       this.repositionToWorkArea();
-    });
+    };
+    screen.on('display-metrics-changed', this.onDisplayChange);
+    screen.on('display-added', this.onDisplayChange);
+    screen.on('display-removed', this.onDisplayChange);
   }
 
   getWorkArea() {
@@ -78,10 +94,15 @@ class Walker {
 
   repositionToWorkArea() {
     const workArea = this.getWorkArea();
-    this.y = workArea.y + workArea.height - this.windowHeight;
-    const minX = workArea.x;
-    const maxX = workArea.x + workArea.width - this.windowWidth;
-    this.x = Math.max(minX, Math.min(maxX, this.x));
+    const clamped = clampToWorkArea({
+      x: this.x,
+      y: workArea.y + workArea.height - this.windowHeight,
+      workArea,
+      windowWidth: this.windowWidth,
+      windowHeight: this.windowHeight
+    });
+    this.x = clamped.x;
+    this.y = clamped.y;
     if (this.window && !this.window.isDestroyed()) {
       this.window.setPosition(Math.round(this.x), Math.round(this.y));
     }
@@ -104,6 +125,11 @@ class Walker {
       clearTimeout(this.behaviourTimer);
       this.behaviourTimer = null;
     }
+    if (this.onDisplayChange) {
+      screen.removeListener('display-metrics-changed', this.onDisplayChange);
+      screen.removeListener('display-added', this.onDisplayChange);
+      screen.removeListener('display-removed', this.onDisplayChange);
+    }
   }
 
   pause(reason = 'external') {
@@ -122,10 +148,18 @@ class Walker {
   }
 
   setPosition(x, y) {
-    this.x = x;
-    this.y = y;
+    const workArea = this.getWorkArea();
+    const clamped = clampToWorkArea({
+      x,
+      y,
+      workArea,
+      windowWidth: this.windowWidth,
+      windowHeight: this.windowHeight
+    });
+    this.x = clamped.x;
+    this.y = clamped.y;
     if (this.window && !this.window.isDestroyed()) {
-      this.window.setPosition(Math.round(x), Math.round(y));
+      this.window.setPosition(Math.round(this.x), Math.round(this.y));
     }
   }
 

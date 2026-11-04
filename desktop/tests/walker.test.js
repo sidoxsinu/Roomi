@@ -90,4 +90,41 @@ describe('Walker step math and edge turning (APP-2)', () => {
 
     assert.deepStrictEqual(res, { x: 900, y: 860 });
   });
+
+  it('strictly clamps to integer pixel borders under Windows fractional DPI workAreas', () => {
+    // Simulating Windows 125% scaling: 1920x1080 -> 1536 x 825.6
+    const fractionalWorkArea = { x: 0, y: 0, width: 1536, height: 825.6 };
+    const res = clampToWorkArea({
+      x: 2000,
+      y: 900,
+      workArea: fractionalWorkArea,
+      windowWidth,
+      windowHeight
+    });
+
+    const expectedMaxX = Math.floor(1536 - windowWidth); // 1336
+    const expectedMaxY = Math.floor(825.6 - windowHeight); // 605
+    assert.strictEqual(res.x, expectedMaxX);
+    assert.strictEqual(res.y, expectedMaxY);
+    assert.ok(res.x + windowWidth <= fractionalWorkArea.width, 'Window must not exceed right border');
+    assert.ok(res.y + windowHeight <= fractionalWorkArea.height, 'Window must not exceed bottom border');
+  });
+
+  it('recovers strictly into bounds when starting from an out-of-bounds position', () => {
+    const res = stepWalker({
+      x: 2500, // starting far past right border
+      y: 860,
+      dir: 'left',
+      speedPxPerSec: 50,
+      dtSec: 0.1,
+      workArea,
+      windowWidth,
+      windowHeight
+    });
+
+    const maxX = workArea.width - windowWidth;
+    assert.strictEqual(res.x, maxX);
+    assert.strictEqual(res.dir, 'left');
+    assert.ok(res.x <= maxX, 'Must clamp to maxX');
+  });
 });

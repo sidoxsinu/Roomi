@@ -29,7 +29,12 @@ let lastReading = null;
 function setSafeWindowPosition(x, y) {
   if (!mainWindow || mainWindow.isDestroyed()) return null;
 
-  const workArea = screen.getDisplayMatching(mainWindow.getBounds()).workArea;
+  const targetPoint = {
+    x: Number.isFinite(x) ? Math.round(x) : 0,
+    y: Number.isFinite(y) ? Math.round(y) : 0
+  };
+  const targetDisplay = screen.getDisplayNearestPoint(targetPoint) || screen.getPrimaryDisplay();
+  const workArea = targetDisplay.workArea;
   const [windowWidth, windowHeight] = mainWindow.getSize();
   const position = clampToWorkArea({
     x,
@@ -39,7 +44,7 @@ function setSafeWindowPosition(x, y) {
     windowHeight
   });
 
-  mainWindow.setPosition(Math.round(position.x), Math.round(position.y));
+  mainWindow.setPosition(position.x, position.y);
   return position;
 }
 
@@ -225,6 +230,7 @@ function openSettingsWindow() {
     resizable: true,
     minimizable: true,
     maximizable: false,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, '../preload/preload.js'),
       contextIsolation: true,
@@ -291,6 +297,16 @@ function initApp() {
   mainWindow.on('show', () => {
     if (walker) walker.resume('hidden');
     mainWindow.webContents.send('app:visibility', true);
+  });
+
+  mainWindow.on('blur', () => {
+    // If the window loses focus while dragging, cleanly cancel the drag state
+    if (dragOriginWinPos) {
+      dragPositions = [];
+      dragOriginWinPos = null;
+      if (walker) walker.resume('drag');
+      mainWindow.webContents.send('character:drag', { isDragging: false, isAirborne: false, vx: 0, vy: 0 });
+    }
   });
 
   // Setup Sensor Client (APP-3, APP-4)

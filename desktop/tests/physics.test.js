@@ -121,5 +121,33 @@ describe('Physics Drop & Gravity Engine', () => {
       }
     });
   });
+
+  it('strictly bounds all step positions within bounds even with extreme velocities', (t, done) => {
+    const physics = new PhysicsDropEngine();
+    const minX = 100;
+    const maxX = 1600;
+    const minY = 50;
+    const floorY = 800;
+
+    physics.drop({
+      startX: 99999, // starting out of bounds
+      startY: -99999,
+      vx: 50000, // extreme velocity
+      vy: -50000,
+      floorY,
+      bounds: { minX, maxX, minY },
+      onStep: ({ x, y }) => {
+        assert.ok(x >= minX, `x (${x}) must be >= minX (${minX})`);
+        assert.ok(x <= maxX, `x (${x}) must be <= maxX (${maxX})`);
+        assert.ok(y >= minY, `y (${y}) must be >= minY (${minY})`);
+        assert.ok(y <= floorY, `y (${y}) must be <= floorY (${floorY})`);
+      },
+      onRest: ({ x, y }) => {
+        assert.ok(x >= minX && x <= maxX);
+        assert.strictEqual(y, floorY);
+        done();
+      }
+    });
+  });
 });
 

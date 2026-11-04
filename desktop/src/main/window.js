@@ -21,29 +21,30 @@ function createCharacterWindow() {
     }
   });
 
-  win.setAlwaysOnTop(true, 'screen-saver');
-  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  const isMac = process.platform === 'darwin';
 
-  const keepOnTop = () => {
-    if (!win.isDestroyed()) {
+  const applyAlwaysOnTop = () => {
+    if (win.isDestroyed()) return;
+    if (isMac) {
       win.setAlwaysOnTop(true, 'screen-saver');
-      win.moveTop();
+      win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+      if (typeof win.moveTop === 'function') win.moveTop();
+    } else {
+      win.setAlwaysOnTop(true);
     }
   };
-  const topmostTimer = setInterval(keepOnTop, 1000);
-  win.on('show', keepOnTop);
-  win.on('blur', keepOnTop);
-  win.on('closed', () => clearInterval(topmostTimer));
+
+  applyAlwaysOnTop();
+  win.on('show', applyAlwaysOnTop);
+  win.on('blur', applyAlwaysOnTop);
+
   win.once('ready-to-show', () => {
-    keepOnTop();
+    applyAlwaysOnTop();
     win.showInactive();
   });
 
-  if (process.platform === 'darwin') {
-    win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-    if (app.dock) {
-      app.dock.hide();
-    }
+  if (isMac && app.dock) {
+    app.dock.hide();
   }
 
   // Click-through: ignore mouse events on transparent area, forward events to underlying apps

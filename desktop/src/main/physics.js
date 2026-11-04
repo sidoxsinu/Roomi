@@ -43,19 +43,19 @@ class PhysicsDropEngine {
   }) {
     this.stop();
 
-    const minX = Number.isFinite(bounds.minX) ? bounds.minX : 0;
-    const maxX = Number.isFinite(bounds.maxX) ? bounds.maxX : 1920;
-    const minY = Number.isFinite(bounds.minY) ? bounds.minY : 0;
-    const safeFloorY = Number.isFinite(floorY) ? floorY : 600;
+    const minX = Math.ceil(Number.isFinite(bounds.minX) ? bounds.minX : 0);
+    const maxX = Math.floor(Number.isFinite(bounds.maxX) ? bounds.maxX : 1920);
+    const minY = Math.ceil(Number.isFinite(bounds.minY) ? bounds.minY : 0);
+    const safeFloorY = Math.floor(Number.isFinite(floorY) ? floorY : 600);
 
-    let x = Number.isFinite(startX) ? startX : minX;
-    let y = Number.isFinite(startY) ? startY : minY;
+    let x = Number.isFinite(startX) ? Math.max(minX, Math.min(maxX, startX)) : minX;
+    let y = Number.isFinite(startY) ? Math.max(minY, Math.min(safeFloorY, startY)) : minY;
     let currentVx = Number.isFinite(vx) ? Math.max(-1000, Math.min(1000, vx)) : 0;
     let currentVy = Number.isFinite(vy) ? Math.max(-1400, Math.min(1400, vy)) : 0;
 
     // Already on or below the floor
     if (y >= safeFloorY && Math.abs(currentVy) < 10) {
-      const clampedX = Math.max(minX, Math.min(maxX, x));
+      const clampedX = Math.max(minX, Math.min(maxX, Math.round(x)));
       onStep({ x: clampedX, y: safeFloorY, vx: 0, vy: 0, isAirborne: false });
       onRest({ x: clampedX, y: safeFloorY });
       return;
@@ -84,18 +84,21 @@ class PhysicsDropEngine {
       if (y <= minY) {
         y = minY;
         currentVy = Math.abs(currentVy) * this.restitution; // Rebound downward under gravity
-        onBounce({ impactVelocity: Math.abs(currentVy), x, y, type: 'ceiling' });
+        const bounceX = Math.max(minX, Math.min(maxX, Math.round(x)));
+        onBounce({ impactVelocity: Math.abs(currentVy), x: bounceX, y: minY, type: 'ceiling' });
       }
 
       // Wall Collisions
-      if (x < minX) {
+      if (x <= minX) {
         x = minX;
         currentVx = Math.abs(currentVx) * this.wallRestitution;
-        onBounce({ impactVelocity: Math.abs(currentVx), x, y, type: 'wall' });
-      } else if (x > maxX) {
+        const bounceY = Math.max(minY, Math.min(safeFloorY, Math.round(y)));
+        onBounce({ impactVelocity: Math.abs(currentVx), x: minX, y: bounceY, type: 'wall' });
+      } else if (x >= maxX) {
         x = maxX;
         currentVx = -Math.abs(currentVx) * this.wallRestitution;
-        onBounce({ impactVelocity: Math.abs(currentVx), x, y, type: 'wall' });
+        const bounceY = Math.max(minY, Math.min(safeFloorY, Math.round(y)));
+        onBounce({ impactVelocity: Math.abs(currentVx), x: maxX, y: bounceY, type: 'wall' });
       }
 
       // Floor Collision
@@ -108,21 +111,22 @@ class PhysicsDropEngine {
           currentVy = 0;
           currentVx = 0;
           this.stop();
-          onBounce({ impactVelocity: impactSpeed, x, y, type: 'floor', final: true });
-          const finalX = Number.isFinite(x) ? Math.round(x) : minX;
-          const finalY = Math.round(safeFloorY);
+          const finalX = Math.max(minX, Math.min(maxX, Number.isFinite(x) ? Math.round(x) : minX));
+          const finalY = safeFloorY;
+          onBounce({ impactVelocity: impactSpeed, x: finalX, y: finalY, type: 'floor', final: true });
           onStep({ x: finalX, y: finalY, vx: 0, vy: 0, isAirborne: false });
           onRest({ x: finalX, y: finalY });
           return;
         } else {
           // Bounce
           currentVy = -impactSpeed * this.restitution;
-          onBounce({ impactVelocity: impactSpeed, x, y, type: 'floor', final: false });
+          const bounceX = Math.max(minX, Math.min(maxX, Math.round(x)));
+          onBounce({ impactVelocity: impactSpeed, x: bounceX, y: safeFloorY, type: 'floor', final: false });
         }
       }
 
-      const outX = Number.isFinite(x) ? Math.round(x) : minX;
-      const outY = Number.isFinite(y) ? Math.round(y) : safeFloorY;
+      const outX = Math.max(minX, Math.min(maxX, Number.isFinite(x) ? Math.round(x) : minX));
+      const outY = Math.max(minY, Math.min(safeFloorY, Number.isFinite(y) ? Math.round(y) : safeFloorY));
       onStep({ x: outX, y: outY, vx: currentVx, vy: currentVy, isAirborne: outY < safeFloorY });
     }, intervalMs);
   }

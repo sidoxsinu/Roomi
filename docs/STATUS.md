@@ -24,13 +24,13 @@ Last updated: 2026-11-04
 | FW-7 | LED indicator | Written, not flashed | Fast blink (error), slow blink (Wi-Fi), solid (OK) (2026-11-03) |
 | FW-8 | Optional LDR and sound | Written, not flashed | ADC1 analogRead on GPIO 34/35 behind ENABLE flags (2026-11-03) |
 | FW-9 | 4-servo quadruped locomotion | Written, not flashed | Push-and-snap gait on GPIO 18, 21, 19, 22 pinned to FreeRTOS Core 1 (2026-11-04) |
-| APP-1 | Transparent always-on-top window | Implemented (mock-tested) | Frameless transparent digital robot twin window reasserts topmost state every second, moves to top, and cannot be hidden from the tray (2026-11-04) |
-| APP-2 | Walks across real desktop | Implemented (mock-tested) | Digital robot twin walker, drag, and physics movement are clamped inside the active display work area; gravity drop and edge physics verified (2026-11-04) |
+| APP-1 | Transparent always-on-top window | Implemented (mock-tested) | Frameless transparent digital robot twin window with Windows/macOS native alwaysOnTop, clean blur/show restoration, and autoHideMenuBar on settings (2026-11-04) |
+| APP-2 | Walks across real desktop | Implemented (mock-tested) | Walker strictly clamped to integer pixel screen borders (Math.ceil/Math.floor) across Windows DPI scaling and multi-monitor display changes (2026-11-04) |
 | APP-3 | Poll ESP32 | Implemented (mock-tested) | Polling the physical robot node with AbortController timeout verified against mock server on localhost:8080 (2026-11-04) |
 | APP-4 | Validate and detect disconnect | Implemented (mock-tested) | Strict shape/range validation and disconnect detection verified (2026-11-03) |
 | APP-5 | Threshold-driven states | Implemented (mock-tested) | Priority/hysteresis reaction engine; Robo-Node digital twin, companion models, and state audio synthesized (2026-11-04) |
 | APP-6 | Readings panel | Implemented (mock-tested) | Readings panel is visible on startup and shows live physical robot telemetry; unavailable readings remain `--` (2026-11-04) |
-| APP-7 | Click and drag | Implemented (mock-tested) | Drag and physics movement cannot pass the virtual display barrier; robot vocalizations, gravity drop, ceiling bounce, and landing impact verified (2026-11-04) |
+| APP-7 | Click and drag | Implemented (mock-tested) | Pointer capture prevents lost drag events on Windows; drop physics strictly bounded within screen borders and safe floor (2026-11-04) |
 | APP-8 | Idle and sleep | Implemented (mock-tested) | Robot idle blinks and sleep standby mode with procedural audio wired (2026-11-04) |
 | APP-9 | Settings window | Implemented (mock-tested) | Settings window with Robo-Node digital twin default, model selector, audio controls, and disclaimer verified (2026-11-04) |
 | APP-10 | Click-through | Implemented (mock-tested) | Forwarded mousemove hover toggling implemented (2026-11-03) |
